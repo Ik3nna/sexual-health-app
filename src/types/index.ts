@@ -22,6 +22,7 @@ export type SignupFormDataProps = {
 // custom Button type
 export type CustomButtonProps = {
     title: string
+    loading: boolean
     bgStyle?: any
     mt?: number
     onPress: ()=>{}

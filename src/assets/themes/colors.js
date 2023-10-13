@@ -4,5 +4,6 @@ export default {
     blue: "#1F1D6E",
     black: "#0F0C0C",
     skyblue: "#42B0FF",
-    danger: "#8b0000"
+    danger: "#8b0000",
+    grey: "#adb5bd"
 }

@@ -8,7 +8,7 @@ const AppNavContainer = () => {
 
   return (
     <NavigationContainer>
-      {user ? <AuthNavigator /> : <HomeNavigator /> }
+      {user ? <HomeNavigator /> : <AuthNavigator /> }
     </NavigationContainer>
   )
 }

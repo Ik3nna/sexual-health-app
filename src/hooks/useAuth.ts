@@ -1,23 +1,24 @@
 import React, { useEffect } from "react";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth"
+import { Firebase_Auth } from "../config/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
 
 export function useAuth() {
-  const [user, setUser] = React.useState<FirebaseAuthTypes.User | null>();
+  const [user, setUser] = React.useState<User | null>(null);
 
-  const onAuthStateChangedHandler = (user: FirebaseAuthTypes.User | null) => {
-    setTimeout(() => {
+  const auth = Firebase_Auth;
+
+  useEffect(()=> {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);
+        setUser(user)
       } else {
         setUser(null)
       }
-    }, 1000); 
-  }
+    });
 
-  useEffect(()=> {
-    const unsubscribe = auth().onAuthStateChanged(onAuthStateChangedHandler);
-
-    return unsubscribe
+    return () => {
+      unsubscribe();
+    }
   }, [])
 
   return {

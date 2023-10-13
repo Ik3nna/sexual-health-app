@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, Alert } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useForm, Controller } from "react-hook-form";
 import colors from '../assets/themes/colors'
@@ -10,7 +10,8 @@ import { NavigationProps } from '../types';
 import { SIGNUP } from '../constants/routeName';
 import { LoginFormDataProps } from '../types';
 import { useCustomFonts } from "../hooks/useCustomFonts"
-import auth from "@react-native-firebase/auth"
+import { Firebase_Auth } from '../config/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = ({ navigation }: NavigationProps) => {
   const {
@@ -25,16 +26,18 @@ const Login = ({ navigation }: NavigationProps) => {
     },
   })
 
-  const onsubmit = async (data: LoginFormDataProps) => {
-    try {
-      const response = await auth().signInWithEmailAndPassword(data.email, data.password);
+  const auth = Firebase_Auth;
+  const [ loading, setLoading ] = useState(false);
 
-      if (response.user) {
-        Alert.alert("Success", "Welcome!!")
-      }
-    } catch (err) {
-      Alert.alert("Error", "Please try again");
-      reset();
+  const onsubmit = async (data: LoginFormDataProps) => {
+    setLoading(true);
+    try {
+      const response = await signInWithEmailAndPassword(auth, data.email, data.password);
+      console.log(response);
+    } catch (err: any) {
+      Alert.alert("Oops", err.message);
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -49,8 +52,7 @@ const Login = ({ navigation }: NavigationProps) => {
       <StatusBar style='auto' />
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={"position"}
-        keyboardVerticalOffset={-200}
+        behavior={"padding"}
       >
         <View style={{ marginBottom: 5 }}>
           <Text style={styles.text}>LOGIN YOUR</Text>
@@ -110,9 +112,10 @@ const Login = ({ navigation }: NavigationProps) => {
           </TouchableOpacity>
           
           <CustomButton
-            bgStyle={{ backgroundColor: colors.skyblue }}
+            bgStyle="skyblue"
             mt={20}
             title='Login'
+            loading={loading}
             onPress={handleSubmit(onsubmit)}
           />
 

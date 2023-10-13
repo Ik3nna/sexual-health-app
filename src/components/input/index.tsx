@@ -3,11 +3,17 @@ import React from 'react'
 import colors from '../../assets/themes/colors'
 import { getFontSize } from '../../utils/getFontSize'
 import { InputProps } from '../../types'
+import { useCustomFonts } from '../../hooks/useCustomFonts'
 
 const Input = ({ onChange, onBlur, label, value, placeholder, style, error, ...props }: InputProps) => {
+  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
  
   return (
-    <View>
+    <View onLayout={onLayoutRootView}>
       <Text style={styles.text}>{label}</Text>
       <TextInput 
         style={[styles.input, style, { borderColor: error ? colors.danger : colors.black }]}

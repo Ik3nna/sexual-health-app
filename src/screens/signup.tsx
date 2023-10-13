@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, Alert } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useForm, Controller } from "react-hook-form";
 import colors from '../assets/themes/colors'
@@ -10,7 +10,8 @@ import { NavigationProps } from '../types';
 import { LOGIN } from '../constants/routeName';
 import { SignupFormDataProps } from '../types';
 import { useCustomFonts } from '../hooks/useCustomFonts';
-import auth from "@react-native-firebase/auth"
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Firebase_Auth } from '../config/firebase';
 
 const Signup = ({ navigation }: NavigationProps) => {
   const {
@@ -26,17 +27,19 @@ const Signup = ({ navigation }: NavigationProps) => {
     },
   })
 
-  const onsubmit = async (data: SignupFormDataProps) => {
-    try {
-      const response = await auth().createUserWithEmailAndPassword(data.email, data.password);
+  const auth = Firebase_Auth;
+  const [ loading, setLoading ] = useState(false);
 
-      if (response.user) {
-        navigation.navigate(LOGIN);
-        Alert.alert("Success", "Account created successfully!!");
-      }
-    } catch (err) {
-      Alert.alert("Error", "Please try again");
-      reset();
+  const onsubmit = async (data: SignupFormDataProps) => {
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, data.email, data.password);
+      Alert.alert("Success", "Account created successfully")
+    } catch (err: any) {
+      Alert.alert("Oops", err.message);
+      // reset();
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -51,8 +54,7 @@ const Signup = ({ navigation }: NavigationProps) => {
       <StatusBar style='auto' />
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={"position"}
-        keyboardVerticalOffset={-200}
+        behavior={"padding"}
       >
         <View style={{ marginBottom: 5 }}>
           <Text style={styles.text}>SIGNUP</Text>
@@ -129,9 +131,10 @@ const Signup = ({ navigation }: NavigationProps) => {
           </TouchableOpacity>
           
           <CustomButton
-            bgStyle={{ backgroundColor: colors.skyblue }}
+            bgStyle="skyblue"
             mt={20}
             title='Signup'
+            loading={loading}
             onPress={handleSubmit(onsubmit)}
           />
 
