@@ -1,0 +1,10 @@
+export const SPLASH = "Splash";
+export const LOGIN = "Login";
+export const SIGNUP = "Signup";
+export const INFO = "Info";
+export const HOMEPAGE = "Homepage"
+export const HOME = "Home";
+export const CALENDAR = "Calendar";
+export const GRAPHICS = "Graphics";
+export const PEOPLE = "People";
+export const ACTIVITY = "Activity"
