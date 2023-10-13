@@ -10,7 +10,11 @@ export function useAuth() {
   useEffect(()=> {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user)
+        if (user.metadata.creationTime === user.metadata.lastSignInTime) {
+          setUser(null)
+        } else {
+          setUser(user)
+        }
       } else {
         setUser(null)
       }

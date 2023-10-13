@@ -34,10 +34,9 @@ const Signup = ({ navigation }: NavigationProps) => {
     setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
-      Alert.alert("Success", "Account created successfully")
+      navigation.navigate(LOGIN)
     } catch (err: any) {
       Alert.alert("Oops", err.message);
-      // reset();
     } finally {
       setLoading(false)
     }
