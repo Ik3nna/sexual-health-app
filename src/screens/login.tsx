@@ -33,7 +33,6 @@ const Login = ({ navigation }: NavigationProps) => {
     setLoading(true);
     try {
       const response = await signInWithEmailAndPassword(auth, data.email, data.password);
-      console.log(response);
     } catch (err: any) {
       Alert.alert("Oops", err.message);
     } finally {
