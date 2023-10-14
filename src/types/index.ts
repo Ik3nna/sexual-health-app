@@ -24,7 +24,7 @@ export type CustomButtonProps = {
     title: string
     loading: boolean
     bgStyle?: any
-    mt?: number
+    mt?: any
     onPress: ()=> void
 }
 

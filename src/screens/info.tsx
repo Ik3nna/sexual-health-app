@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useCustomFonts } from '../hooks/useCustomFonts'
 import Icon from '../components/icons'
@@ -11,9 +11,52 @@ import { signOut } from 'firebase/auth'
 import { Firebase_Auth } from '../config/firebase'
 import { getFontSize } from '../utils/getFontSize'
 import CustomButton from '../components/custom-button'
+import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
+
+const ageRange = ["16 - 20", "21 - 24", "25 - 29", "30 - 34", "35 - 39",
+"40 - 44", "45 - 49", "50 - 54", "55 - 59", "≥ 60"
+];
+const track = ["CHECK UPS", "TEST RESULTS", "SEXUAL ACTIVITY", "PILL REMINDER", "ALL"];
 
 const Info = ({ navigation }: NavigationProps) => {
+  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+  const auth = Firebase_Auth;
   const [ currentStep, setCurrentStep ] = useState(1);
+  const gender: RadioButtonProps[] = useMemo(() => ([
+    {
+      id: '1', 
+      label: 'FEMALE',
+      value: 'female',
+      color: colors.filled,
+      size: 30,
+      labelStyle: { fontFamily: "pro-bold", fontSize: getFontSize(0.023) }
+    },
+    {
+      id: '2',
+      label: 'MALE',
+      value: 'male',
+      color: colors.filled,
+      size: 30,
+      labelStyle: { fontFamily: "pro-bold", fontSize: getFontSize(0.023) }
+    },
+    {
+      id: '3', 
+      label: 'NON-BINARY',
+      value: 'non-binary',
+      color: colors.filled,
+      size: 30,
+      labelStyle: { fontFamily: "pro-bold", fontSize: getFontSize(0.023) }
+    },
+    {
+      id: '4',
+      label: 'OTHERS',
+      value: 'others',
+      color: colors.filled,
+      size: 30,
+      labelStyle: { fontFamily: "pro-bold", fontSize: getFontSize(0.023) }
+    }
+  ]), []);
+  const [selectedId, setSelectedId] = useState<string | undefined>();
 
   const handleNextStep = ()=> {
     setCurrentStep((prev) => prev + 1);
@@ -35,8 +78,6 @@ const Info = ({ navigation }: NavigationProps) => {
     }
   }
 
-  const auth = Firebase_Auth;
-
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -44,8 +85,6 @@ const Info = ({ navigation }: NavigationProps) => {
       console.error("Error signing out:", error);
     }
   }
-
-  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
 
   if (!fontsLoaded) {
     return null;
@@ -92,12 +131,21 @@ const Info = ({ navigation }: NavigationProps) => {
 
             <Text style={{ paddingVertical: "3%", fontSize: 16, fontFamily: "pro-light" }}>Indicate your gender to customize your experience</Text>
 
-            
-          
+            <RadioGroup 
+              radioButtons={gender} 
+              onPress={setSelectedId}
+              selectedId={selectedId}
+              containerStyle={{ paddingVertical:"7%", justifyContent: "center", rowGap: 30, alignItems: "flex-start" }}
+            />
           </View>
         }
 
-        {currentStep === 2 && <Text>ehjdj</Text>}
+        {currentStep === 2 && 
+          <View>
+
+          </View>
+        }
+        
         {currentStep === 3 && <Text>ehjdj</Text>}
 
         <CustomButton 
@@ -105,6 +153,7 @@ const Info = ({ navigation }: NavigationProps) => {
           bgStyle="blue"
           onPress={handleContinue}
           loading={currentStep < 3 ? false : true}
+          mt="20%"
         />
         </View>
     </SafeAreaView>
