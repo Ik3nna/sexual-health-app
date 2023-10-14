@@ -25,7 +25,7 @@ export type CustomButtonProps = {
     loading: boolean
     bgStyle?: any
     mt?: number
-    onPress: ()=>{}
+    onPress: ()=> void
 }
 
 // Input type
@@ -38,4 +38,16 @@ export type InputProps = {
     onChange: ()=> void
     onBlur: ()=> void
     [props: string]: any
+}
+
+// Icon type
+export type IconProps = {
+    [props: string]: any
+}
+
+// Step type 
+export type StepProps = {
+    isFilled: boolean, 
+    isFirst: boolean, 
+    isLast: boolean 
 }

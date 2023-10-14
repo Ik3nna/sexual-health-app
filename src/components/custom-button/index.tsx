@@ -12,6 +12,9 @@ const CustomButton = ({ title, onPress, bgStyle, loading, mt }: CustomButtonProp
     if (bgStyle === "skyblue" && !loading) {
       return colors.skyblue
     }
+    if (bgStyle === "blue" && !loading) {
+      return colors.blue
+    }
     else if (loading) {
       return colors.grey
     }

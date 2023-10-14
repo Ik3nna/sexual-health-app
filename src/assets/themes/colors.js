@@ -5,5 +5,7 @@ export default {
     black: "#0F0C0C",
     skyblue: "#42B0FF",
     danger: "#8b0000",
-    grey: "#adb5bd"
+    grey: "#adb5bd",
+    filled: "#6A2E4B",
+    empty: "#C89183"
 }

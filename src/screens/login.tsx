@@ -107,7 +107,7 @@ const Login = ({ navigation }: NavigationProps) => {
           />
 
           <TouchableOpacity>
-            <Text style={{ paddingVertical: 4, fontSize: 16, fontFamily: "pro-light" }}>Forgot Password?</Text>
+            <Text style={{ paddingVertical: "3%", fontSize: getFontSize(0.02), fontFamily: "pro-light" }}>Forgot Password?</Text>
           </TouchableOpacity>
           
           <CustomButton
