@@ -86,10 +86,10 @@ const Info = ({ navigation }: NavigationProps) => {
     if (currentStep === 1 && selectedId !== undefined) {
       handleNextStep()
     }
-    if (currentStep === 2 && selectedAgeFirstView !== null || selectedAgeSecondView !== null) {
+    else if (currentStep === 2 && selectedAgeFirstView !== null || selectedAgeSecondView !== null) {
       handleNextStep()
     }
-    if (currentStep === 3) {
+    else if (currentStep === 3) {
       handleFinalStep()
     }
   }
@@ -196,7 +196,11 @@ const Info = ({ navigation }: NavigationProps) => {
           </View>
         }
         
-        {currentStep === 3 && <Text>ehjdj</Text>}
+        {currentStep === 3 && 
+          <View>
+
+          </View>
+        }
 
         <CustomButton 
           title='CONTINUE'
