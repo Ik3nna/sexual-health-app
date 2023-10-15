@@ -57,6 +57,18 @@ const Info = ({ navigation }: NavigationProps) => {
     }
   ]), []);
   const [selectedId, setSelectedId] = useState<string | undefined>();
+  const [selectedAgeFirstView, setSelectedAgeFirstView] = useState(null);
+  const [selectedAgeSecondView, setSelectedAgeSecondView] = useState(null);
+
+  const handleAgeClick = (index: any, view: any) => {
+    if (view === 'first') {
+      setSelectedAgeFirstView(index);
+      setSelectedAgeSecondView(null);
+    } else {
+      setSelectedAgeFirstView(null);
+      setSelectedAgeSecondView(index);
+    }
+  };
 
   const handleNextStep = ()=> {
     setCurrentStep((prev) => prev + 1);
@@ -71,10 +83,14 @@ const Info = ({ navigation }: NavigationProps) => {
   }
 
   const handleContinue = ()=> {
-    if (currentStep < 3) {
+    if (currentStep === 1 && selectedId !== undefined) {
       handleNextStep()
-    } else {
-      handleFinalStep();
+    }
+    if (currentStep === 2 && selectedAgeFirstView !== null || selectedAgeSecondView !== null) {
+      handleNextStep()
+    }
+    if (currentStep === 3) {
+      handleFinalStep()
     }
   }
 
@@ -142,7 +158,41 @@ const Info = ({ navigation }: NavigationProps) => {
 
         {currentStep === 2 && 
           <View>
+            <View>
+              <Text style={{ color: colors.black, fontSize: getFontSize(0.05), fontFamily: "pro-bold" }}>CHOOSE YOUR AGE</Text>
+            </View>
 
+            <Text style={{ paddingVertical: "3%", fontSize: 16, fontFamily: "pro-light" }}>Select age range to customize experience</Text>
+
+            <View style={styles.age_container}>
+              <View>
+                {ageRange.slice(0, 5).map((item, index)=>
+                  <TouchableOpacity  
+                    key={index} 
+                    style={[styles.age, { backgroundColor: selectedAgeFirstView === index ? colors.brown : colors.white }]} 
+                    onPress={()=>handleAgeClick(index, 'first')}
+                  >
+                    <Text style={[styles.age_Text, { color: selectedAgeFirstView === index ? colors.white : colors.brown }]}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              
+              <View>
+                {ageRange.slice(5).map((item, index)=>
+                  <TouchableOpacity 
+                    key={index} 
+                    style={[styles.age, { backgroundColor: selectedAgeSecondView === index ? colors.brown : colors.white }]} 
+                    onPress={()=>handleAgeClick(index, 'second')}
+                  >
+                   <Text style={[styles.age_Text, { color: selectedAgeSecondView === index ? colors.white : colors.brown }]}>
+                     {item}
+                   </Text>
+                 </TouchableOpacity>
+                )}
+              </View>
+            </View>
           </View>
         }
         
@@ -152,10 +202,9 @@ const Info = ({ navigation }: NavigationProps) => {
           title='CONTINUE'
           bgStyle="blue"
           onPress={handleContinue}
-          loading={currentStep < 3 ? false : true}
-          mt="20%"
+          mt="30%"
         />
-        </View>
+      </View>
     </SafeAreaView>
   )
 }
@@ -210,6 +259,24 @@ const styles = StyleSheet.create({
   },
   wrapper_container: {
     marginTop: "20%",
-    paddingHorizontal: "5%"
+    paddingHorizontal: "5%",
   },
+  age_container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: "7%"
+  },
+  age: {
+    marginBottom: "14%",
+    borderWidth: 4,
+    borderRadius: 14,
+    borderColor: colors.brown,
+    paddingHorizontal: "8%",
+  },
+  age_Text: {
+    fontFamily: "pro-black",
+    fontSize: getFontSize(0.035),
+    textAlign: "center",
+  }
 })

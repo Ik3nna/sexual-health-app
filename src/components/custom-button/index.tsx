@@ -5,7 +5,7 @@ import { getFontSize } from '../../utils/getFontSize'
 import { CustomButtonProps } from '../../types'
 import { useCustomFonts } from '../../hooks/useCustomFonts'
 
-const CustomButton = ({ title, onPress, bgStyle, loading, mt }: CustomButtonProps) => {
+const CustomButton = ({ title, onPress, bgStyle, loading, mt, style }: CustomButtonProps) => {
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
 
   const getBorderColor = () => {
@@ -25,7 +25,7 @@ const CustomButton = ({ title, onPress, bgStyle, loading, mt }: CustomButtonProp
   }
 
   return (
-    <TouchableOpacity style={[styles.container, { marginTop: mt, backgroundColor: getBorderColor() }]} disabled={loading} onLayout={onLayoutRootView} onPress={onPress}>
+    <TouchableOpacity style={[styles.container, style, { marginTop: mt, backgroundColor: getBorderColor() }]} disabled={loading} onLayout={onLayoutRootView} onPress={onPress}>
       <View style={styles.btn_container}>
         {loading && <ActivityIndicator color={colors.white} style={{ paddingRight: 7 }} />}
         <Text style={styles.text}>{title}</Text>
