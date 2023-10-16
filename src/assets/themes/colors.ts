@@ -7,5 +7,6 @@ export default {
     danger: "#8b0000",
     grey: "#adb5bd",
     filled: "#6A2E4B",
-    empty: "#C89183"
+    empty: "#C89183",
+    tabBgColor: "rgba(153, 60, 64, 0.60)",
 }

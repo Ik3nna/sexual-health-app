@@ -7,4 +7,4 @@ export const HOME = "Home";
 export const CALENDAR = "Calendar";
 export const GRAPHICS = "Graphics";
 export const PEOPLE = "People";
-export const ACTIVITY = "Activity"
+export const ACTIVITY = "Activity";
