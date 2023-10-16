@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CALENDAR, GRAPHICS, HOME, HOMEPAGE, INFO, PEOPLE } from '../constants/routeName';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Icon from '../components/icons';
 import colors from '../assets/themes/colors';
 import { getFontSize } from '../utils/getFontSize';
@@ -82,16 +82,5 @@ const style = StyleSheet.create({
   tabBarStyle: {
     backgroundColor: colors.tabBgColor,
     paddingTop: "2%",
-    ...Platform.select({
-      ios: {
-        shadowColor: "rgba(0, 0, 0, 0.25)",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4
-      }
-    })
   }
 })

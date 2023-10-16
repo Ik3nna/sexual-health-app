@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, Dimensions, Platform } from 'react-native'
 import React, { useState, useEffect, useMemo } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useCustomFonts } from '../hooks/useCustomFonts'
@@ -13,6 +13,7 @@ import { getFontSize } from '../utils/getFontSize'
 import CustomButton from '../components/custom-button'
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 import Checkbox from 'expo-checkbox'
+import { useGlobalContext } from '../context/useGlobalContext'
 
 const ageRange = ["16 - 20", "21 - 24", "25 - 29", "30 - 34", "35 - 39",
 "40 - 44", "45 - 49", "50 - 54", "55 - 59", "≥ 60"
@@ -61,6 +62,7 @@ const Info = ({ navigation }: NavigationProps) => {
   const [selectedAgeFirstView, setSelectedAgeFirstView] = useState(null);
   const [selectedAgeSecondView, setSelectedAgeSecondView] = useState(null);
   const [selectedCheckbox, setSelectedCheckbox] = useState<number | null>(null);
+  const { setIsLoggedIn } = useGlobalContext();
 
   const handleAgeClick = (index: any, view: any) => {
     if (view === 'first') {
@@ -107,6 +109,7 @@ const Info = ({ navigation }: NavigationProps) => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      setIsLoggedIn(false);
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -161,7 +164,7 @@ const Info = ({ navigation }: NavigationProps) => {
               radioButtons={gender} 
               onPress={setSelectedId}
               selectedId={selectedId}
-              containerStyle={{ paddingVertical:"7%", justifyContent: "center", rowGap: 30, alignItems: "flex-start" }}
+              containerStyle={{ paddingVertical:"7%", justifyContent: "center", rowGap: Platform.OS === "ios" ? 30 : 25, alignItems: "flex-start" }}
             />
           </View>
         }
@@ -278,7 +281,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: "6%",
+    paddingVertical: Platform.OS === "ios" ? "6%" : "10%"
   },
   step_bar_container: {
     flexDirection: "row",
@@ -289,7 +292,7 @@ const styles = StyleSheet.create({
     width: stepWidth
   },
   wrapper_container: {
-    marginTop: "20%",
+    marginTop: Platform.OS === "ios" ? "20%" : "6%",
     paddingHorizontal: "5%",
   },
   age_container: {
@@ -314,7 +317,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     columnGap: 15,
-    paddingVertical: "5.7%",
+    paddingVertical: Platform.OS === "ios" ? "5.7%" : "5%",
   },
   checkbox: {
     width: checkboxWidth,

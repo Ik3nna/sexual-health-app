@@ -9,4 +9,5 @@ export default {
     filled: "#6A2E4B",
     empty: "#C89183",
     tabBgColor: "rgba(153, 60, 64, 0.60)",
+    nameColor: "#1F1D6E"
 }

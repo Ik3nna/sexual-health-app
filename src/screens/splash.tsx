@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View, Dimensions } from 'react-native'
 import React, { useEffect, useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useFocusEffect } from '@react-navigation/native'
@@ -12,6 +12,7 @@ import splashBg from "../assets/images/splash-bg.png";
 import colors from '../assets/themes/colors';
 
 const Splash = ({ navigation}: NavigationProps) => {
+  const getWidth = Dimensions.get("window").width;
  
   useEffect(()=>{
     setTimeout(()=>{
@@ -38,7 +39,7 @@ const Splash = ({ navigation}: NavigationProps) => {
   return (
     <View onLayout={onLayoutRootView}>
       <StatusBar style='auto' />
-      <Image source={splashBg} />
+      <Image source={splashBg} style={{ width: getWidth }} />
       <View style={styles.text_container}>
         <Text style={{ color: colors.white, fontSize: getFontSize(0.05), fontFamily: "pro-bold" }}>WELCOME TO</Text>
         <Text style={{ color: colors.brown, fontSize: getFontSize(0.05), fontFamily: "pro-bold" }}>GO CHECK UP</Text>

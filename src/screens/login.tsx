@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, Alert } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, Alert, Platform, Dimensions } from 'react-native'
 import React, { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useForm, Controller } from "react-hook-form";
@@ -12,6 +12,7 @@ import { LoginFormDataProps } from '../types';
 import { useCustomFonts } from "../hooks/useCustomFonts"
 import { Firebase_Auth } from '../config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useGlobalContext } from '../context/useGlobalContext';
 
 const Login = ({ navigation }: NavigationProps) => {
   const {
@@ -28,11 +29,16 @@ const Login = ({ navigation }: NavigationProps) => {
 
   const auth = Firebase_Auth;
   const [ loading, setLoading ] = useState(false);
+  const { setIsLoggedIn } = useGlobalContext();
+  const getHeight = Dimensions.get("window").height;
 
   const onsubmit = async (data: LoginFormDataProps) => {
     setLoading(true);
     try {
       const response = await signInWithEmailAndPassword(auth, data.email, data.password);
+      if (response.user) {
+        setIsLoggedIn(true);
+      }
     } catch (err: any) {
       Alert.alert("Oops", err.message);
     } finally {
@@ -51,14 +57,15 @@ const Login = ({ navigation }: NavigationProps) => {
       <StatusBar style='auto' />
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={"padding"}
+        behavior={Platform.OS === "ios" ? "padding" : "position"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : getHeight - (3 * getHeight)}
       >
-        <View style={{ marginBottom: 5 }}>
+        <View style={{ marginBottom: 5, paddingLeft: "5%" }}>
           <Text style={styles.text}>LOGIN YOUR</Text>
           <Text style={styles.text}>ACCOUNT</Text>
         </View>
 
-        <View>
+        <View style={{ justifyContent: "center", alignItems:"center" }}>
           <Controller
             control={control}
             rules={{
@@ -107,7 +114,7 @@ const Login = ({ navigation }: NavigationProps) => {
           />
 
           <TouchableOpacity>
-            <Text style={{ paddingVertical: "3%", fontSize: getFontSize(0.02), fontFamily: "pro-light" }}>Forgot Password?</Text>
+            <Text style={{ paddingVertical: "3%", marginLeft: "-45%", fontSize: getFontSize(0.02), fontFamily: "pro-light" }}>Forgot Password?</Text>
           </TouchableOpacity>
           
           <CustomButton
@@ -116,6 +123,7 @@ const Login = ({ navigation }: NavigationProps) => {
             title='Login'
             loading={loading}
             onPress={handleSubmit(onsubmit)}
+            style={{ width: "90%" }}
           />
 
           <View style={styles.register}>
@@ -137,8 +145,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "flex-start",
-    paddingLeft: "5%",
   },
   text: {
     color: colors.black,

@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Firebase_Auth } from "../config/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGlobalContext } from "../context/useGlobalContext";
 
 export function useAuth() {
   const [user, setUser] = React.useState<User | null>(null);
   const auth = Firebase_Auth;
+  const { isLoggedIn } = useGlobalContext();
 
   useEffect(()=> {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        if (user.metadata.creationTime === user.metadata.lastSignInTime) {
+        if (isLoggedIn) {
+          setUser(user);
+          console.log(isLoggedIn);
+        } else {
           setUser(null)
-        } 
-        else {
-          setUser(user)
         }
       } 
       else {
@@ -28,7 +29,6 @@ export function useAuth() {
   }, [])
 
   return {
-    user, 
-    setUser
+    user
   };
 }
