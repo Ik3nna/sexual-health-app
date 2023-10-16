@@ -14,7 +14,7 @@ const Tab = createBottomTabNavigator();
 function BottomTabs () {
   return (
     <Tab.Navigator>
-      <Tab.Screen name={HOME} component={Home} />
+      <Tab.Screen name={HOME} component={Home} options={{ headerShown: false }} />
       <Tab.Screen name={CALENDAR} component={Calendar} />
       <Tab.Screen name={GRAPHICS} component={Graphics} />
       <Tab.Screen name={PEOPLE} component={People} />

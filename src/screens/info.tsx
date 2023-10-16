@@ -99,7 +99,7 @@ const Info = ({ navigation }: NavigationProps) => {
     else if (currentStep === 2 && selectedAgeFirstView !== null || selectedAgeSecondView !== null) {
       handleNextStep()
     }
-    else if (currentStep === 3) {
+    else if (currentStep === 3 && selectedCheckbox !== null) {
       handleFinalStep()
     }
   }
@@ -266,11 +266,9 @@ function Step({ isFilled, isFirst, isLast }: StepProps) {
 }
 
 const getWidth = Dimensions.get("window").width;
-const getHeight = Dimensions.get("window").height;
-const stepHeight = getHeight - (getHeight * 0.75);
 const stepWidth = getWidth - (getWidth * 0.73);
 const checkboxWidth = getWidth - (getWidth * 0.93);
-const checkboxHeight = getHeight - (getHeight * 0.64);
+
 
 const styles = StyleSheet.create({
   container: {
@@ -287,7 +285,7 @@ const styles = StyleSheet.create({
     paddingLeft: 14
   },
   step_bar: {
-    height: stepHeight,
+    height: 20,
     width: stepWidth
   },
   wrapper_container: {
@@ -321,6 +319,6 @@ const styles = StyleSheet.create({
   checkbox: {
     width: checkboxWidth,
     borderRadius: 7,
-    height: checkboxHeight
+    height: 25
   }
 })
