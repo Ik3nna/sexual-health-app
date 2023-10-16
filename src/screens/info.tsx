@@ -12,6 +12,7 @@ import { Firebase_Auth } from '../config/firebase'
 import { getFontSize } from '../utils/getFontSize'
 import CustomButton from '../components/custom-button'
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
+import Checkbox from 'expo-checkbox'
 
 const ageRange = ["16 - 20", "21 - 24", "25 - 29", "30 - 34", "35 - 39",
 "40 - 44", "45 - 49", "50 - 54", "55 - 59", "≥ 60"
@@ -59,6 +60,7 @@ const Info = ({ navigation }: NavigationProps) => {
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [selectedAgeFirstView, setSelectedAgeFirstView] = useState(null);
   const [selectedAgeSecondView, setSelectedAgeSecondView] = useState(null);
+  const [selectedCheckbox, setSelectedCheckbox] = useState<number | null>(null);
 
   const handleAgeClick = (index: any, view: any) => {
     if (view === 'first') {
@@ -69,6 +71,14 @@ const Info = ({ navigation }: NavigationProps) => {
       setSelectedAgeSecondView(index);
     }
   };
+
+  const handleCheckbox = (index: number) => {
+    setSelectedCheckbox(index)
+
+    if (index === 4) {
+      setSelectedCheckbox(-1);
+    }
+  }
 
   const handleNextStep = ()=> {
     setCurrentStep((prev) => prev + 1);
@@ -198,7 +208,24 @@ const Info = ({ navigation }: NavigationProps) => {
         
         {currentStep === 3 && 
           <View>
+            <View>
+              <Text style={{ color: colors.black, fontSize: getFontSize(0.05), fontFamily: "pro-bold" }}>WHAT DO YOU WANT</Text>
+              <Text style={{ color: colors.black, fontSize: getFontSize(0.05), fontFamily: "pro-bold" }}>TO TRACK?</Text>
+            </View>
 
+            <View style={{ marginTop: "4%" }}>
+              {track.map((item, index)=>(
+                <View key={index} style={styles.checkbox_container}>
+                  <Checkbox 
+                    style={styles.checkbox}
+                    value={selectedCheckbox === -1 || index === selectedCheckbox}
+                    onValueChange={() => handleCheckbox(index)}
+                    color={selectedCheckbox === index || -1 ? colors.brown : undefined}
+                  />
+                  <Text style={{ fontFamily: "pro-light", fontSize: getFontSize(0.025), textAlign: "center", }}>{item}</Text>
+                </View>
+              ))}
+            </View>
           </View>
         }
 
@@ -240,8 +267,10 @@ function Step({ isFilled, isFirst, isLast }: StepProps) {
 
 const getWidth = Dimensions.get("window").width;
 const getHeight = Dimensions.get("window").height;
-const stepHeight = getHeight - (getHeight * 0.975);
+const stepHeight = getHeight - (getHeight * 0.75);
 const stepWidth = getWidth - (getWidth * 0.73);
+const checkboxWidth = getWidth - (getWidth * 0.93);
+const checkboxHeight = getHeight - (getHeight * 0.64);
 
 const styles = StyleSheet.create({
   container: {
@@ -282,5 +311,16 @@ const styles = StyleSheet.create({
     fontFamily: "pro-black",
     fontSize: getFontSize(0.035),
     textAlign: "center",
+  }, 
+  checkbox_container: {
+    flexDirection: "row",
+    alignItems: "center",
+    columnGap: 15,
+    paddingVertical: "5.7%",
+  },
+  checkbox: {
+    width: checkboxWidth,
+    borderRadius: 7,
+    height: checkboxHeight
   }
 })
