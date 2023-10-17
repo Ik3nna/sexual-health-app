@@ -12,4 +12,5 @@ export default {
     nameColor: "#1F1D6E",
     lineColor: "#BCC6D3",
     cancelColor: "#C34629",
+    btrColor: "#D28774"
 }
