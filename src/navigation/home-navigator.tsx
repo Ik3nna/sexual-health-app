@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { CALENDAR, GRAPHICS, HOME, HOMEPAGE, INFO, PEOPLE } from '../constants/routeName';
-import { StyleSheet, View } from 'react-native';
+import { ACTIVITY, CALENDAR, GRAPHICS, HOME, HOMEPAGE, INFO, PEOPLE } from '../constants/routeName';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Icon from '../components/icons';
 import colors from '../assets/themes/colors';
 import { getFontSize } from '../utils/getFontSize';
@@ -13,11 +13,12 @@ import Home from '../screens/home';
 import Calendar from '../screens/calendar';
 import Graphics from '../screens/graphics';
 import People from '../screens/people';
+import Activity from '../screens/activity';
 
 const Tab = createBottomTabNavigator();
 
 function BottomTabs () {
-  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+  const { fontsLoaded } = useCustomFonts();
 
   if (!fontsLoaded) {
     return null;
@@ -30,6 +31,7 @@ function BottomTabs () {
           tabBarIcon: ({ focused, size, color }) => {
             let iconName;
             let type;
+            let newColor;
             if (route.name === HOME) {
               iconName = "home";
               type = "feather";
@@ -38,6 +40,11 @@ function BottomTabs () {
               iconName = "calendar";
               type = "ant";
               size = focused ? 30 : 25;
+            } else if (route.name === ACTIVITY) {
+              iconName = "plus-circle";
+              type="feather";
+              size = 60;
+              newColor = colors.blue
             } else if (route.name === GRAPHICS) {
               iconName = "results";
               type = "foundation";
@@ -48,11 +55,22 @@ function BottomTabs () {
               size = focused ? 30 : 25
             }
             return(
-              <Icon type={type} name={iconName} size={size} color={color} />
+              <View style={{ 
+                position: route.name === ACTIVITY ? "absolute" : "relative", 
+                top: route.name === ACTIVITY ? "-90%" : 0,
+              }}>
+                <Icon type={type} name={iconName} size={size} color={route.name === ACTIVITY ? newColor : color} />
+              </View>
             )
           },
           tabBarStyle: style.tabBarStyle,
-          tabBarLabelStyle: { textTransform: "uppercase", paddingTop: "3%", fontSize: getFontSize(0.0165), fontFamily: "pro-bold" },
+          tabBarLabelStyle: { 
+            display: route.name === ACTIVITY ? "none" : "flex",
+            textTransform: "uppercase", 
+            paddingTop: "3%", 
+            fontSize: getFontSize(0.0165), 
+            fontFamily: "pro-bold" 
+          },
           tabBarActiveTintColor: colors.white,
           tabBarInactiveTintColor: colors.black,
           headerShown: false
@@ -61,6 +79,7 @@ function BottomTabs () {
       >
       <Tab.Screen name={HOME} component={Home} />
       <Tab.Screen name={CALENDAR} component={Calendar} />
+      <Tab.Screen name={ACTIVITY} component={Activity} />
       <Tab.Screen name={GRAPHICS} component={Graphics} />
       <Tab.Screen name={PEOPLE} component={People} />
     </Tab.Navigator>

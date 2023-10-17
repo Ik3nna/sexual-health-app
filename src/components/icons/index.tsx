@@ -13,7 +13,9 @@ const getIconFont = (type: any) => {
     case "octicons":
       return Octicons
     case "ionicons":
-      return Ionicons
+      return Ionicons;
+    case "fa":
+      return FontAwesome;
     default:
       return FontAwesome;
   }

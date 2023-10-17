@@ -57,7 +57,7 @@ const Home = ({ navigation }: NavigationProps) => {
           <View key={index} style={styles.card_container}>
             <Cards>
               <View style={{ flexDirection: "row", alignItems: "center", columnGap: 25 }}>
-                {index === 2 ? <Icon type="ionicons" name="document-text-sharp" size="43%" color={colors.brown} /> : <Image style={{ width: "15%", objectFit: "cover" }} source={item.img} />}
+                {index === 2 ? <Icon type="ionicons" name="document-text-sharp" size={46} color={colors.brown} /> : <Image style={{ width: "15%", objectFit: "cover" }} source={item.img} />}
                 <Text style={styles.header}>{item.header}</Text>
               </View>
 
@@ -66,6 +66,8 @@ const Home = ({ navigation }: NavigationProps) => {
           </View>
         )}
       </ScrollView>
+
+     
     </SafeAreaView>
   )
 }
