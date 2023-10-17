@@ -7,11 +7,13 @@ import colors from '../assets/themes/colors'
 import { getFontSize } from '../utils/getFontSize'
 import { NavigationProps } from '../types'
 import CustomButton from '../components/custom-button'
+import { BottomSheet } from "react-native-btr";
 
 const Activity = ({ navigation }: NavigationProps) => {
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
   const [index, setIndex] = useState<number>();
-
+  const [visible, setVisible] = useState(false)
+ 
   const getFormattedDate = () => {
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -26,9 +28,14 @@ const Activity = ({ navigation }: NavigationProps) => {
     return `${dd}, ${mm} ${yy}`;
   };
 
+  function toggle() {
+    setVisible((visible) => !visible);
+  }
+
+
   const handleSave = ()=> {
     if (index) {
-      
+      toggle();
     }
   }
 
@@ -91,6 +98,16 @@ const Activity = ({ navigation }: NavigationProps) => {
           style={{ width: "48%" }}
         />
       </View>
+
+      <BottomSheet
+        visible={visible}
+        onBackButtonPress={toggle}
+        onBackdropPress={toggle}
+      >
+        <View style={{ backgroundColor: "#fff", height: 250, justifyContent: "center", alignItems: "center" }}>
+          <Text>Place your custom view inside BottomSheet</Text>
+        </View>
+      </BottomSheet>
     </SafeAreaView>
   )
 }
