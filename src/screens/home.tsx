@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProps } from '../types';
 import { getFontSize } from '../utils/getFontSize';
 import Cards from '../components/cards';
+import GoBack from '../components/go-back';
 
 // images
 import sexualAct from "../assets/images/sexual-activity.png";
@@ -24,7 +25,6 @@ const Home = ({ navigation }: NavigationProps) => {
     { img: results, header: "Test results", subText: "Here, you can track your test results" },
     { img: pills, header: "Pill reminder", subText: "Here, you can set a reminder to take your pills" }
   ]
-  const getWidth = Dimensions.get("screen").width;
 
   useEffect(() => {
     AsyncStorage.getItem("name")
@@ -45,9 +45,7 @@ const Home = ({ navigation }: NavigationProps) => {
       <StatusBar style='auto' />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <TouchableOpacity style={{ paddingVertical: Platform.OS === "ios" ? "6%" : "8%" }} onPress={()=>navigation.goBack()}>
-          <Icon type="ant" name="arrowleft" size={27} color={colors.black} />
-        </TouchableOpacity>
+       <GoBack />
 
         <Text style={styles.name}>hello, {userName}</Text>
 

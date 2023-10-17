@@ -9,14 +9,18 @@ const CustomButton = ({ title, onPress, bgStyle, loading, mt, style }: CustomBut
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
 
   const getBorderColor = () => {
-    if (bgStyle === "skyblue" && !loading) {
-      return colors.skyblue
-    }
-    if (bgStyle === "blue" && !loading) {
-      return colors.blue
-    }
-    else if (loading) {
+    if (loading) {
       return colors.grey
+    } else {
+      if (bgStyle === "skyblue") {
+        return colors.skyblue
+      }
+      if (bgStyle === "blue") {
+        return colors.blue
+      }
+      if (bgStyle === "cancel") {
+        return colors.cancelColor
+      }
     }
   }
 
