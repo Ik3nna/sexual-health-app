@@ -2,7 +2,6 @@ import { SafeAreaView, StyleSheet, Text, View, Dimensions, Platform } from 'reac
 import React, { useState, useEffect, useMemo } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useCustomFonts } from '../hooks/useCustomFonts'
-import Icon from '../components/icons'
 import colors from '../assets/themes/colors'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { NavigationProps, StepProps } from '../types'
@@ -14,6 +13,7 @@ import CustomButton from '../components/custom-button'
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 import Checkbox from 'expo-checkbox'
 import { useGlobalContext } from '../context/useGlobalContext'
+import ProgressBar from '../components/progress-bar'
 
 const ageRange = ["16 - 20", "21 - 24", "25 - 29", "30 - 34", "35 - 39",
 "40 - 44", "45 - 49", "50 - 54", "55 - 59", "≥ 60"
@@ -123,32 +123,17 @@ const Info = ({ navigation }: NavigationProps) => {
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
       <StatusBar style='auto' />
 
-      <View style={styles.sub_container}>
-        <TouchableOpacity 
-          onPress={()=>{
-            if (currentStep === 1) {
-              handleSignOut()
-            } else {
-              handlePrevStep()
-            }
-          }}
-        >
-          <Icon type="ant" name="arrowleft" size={27} color={colors.black} />
-        </TouchableOpacity>
-        
-        <View style={styles.step_bar_container}>
-          {Array(3)
-            .fill(null)
-            .map((_, i) => (
-              <Step 
-                key={i} 
-                isFirst={i === 0}
-                isLast={i === 2}
-                isFilled={currentStep >= i + 1} 
-              />
-          ))}
-        </View>
-      </View>
+      <ProgressBar 
+        onPress={()=>{
+          if (currentStep === 1) {
+            handleSignOut()
+          } else {
+            handlePrevStep()
+          }
+        }}
+        currentStep={currentStep}
+        isLast={2}
+      />
 
       <View style={styles.wrapper_container}>
         {currentStep === 1 && 
@@ -245,51 +230,13 @@ const Info = ({ navigation }: NavigationProps) => {
 
 export default Info;
 
-function Step({ isFilled, isFirst, isLast }: StepProps) {
-  const stepStyle = {
-    backgroundColor: isFilled ? colors.filled : colors.empty,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0
-  }
-
-  if (isFirst) {
-    stepStyle.borderTopLeftRadius = 9;
-    stepStyle.borderBottomLeftRadius = 9;
-  }
-  if (isLast) {
-    stepStyle.borderTopRightRadius = 9;
-    stepStyle.borderBottomRightRadius = 9;
-  }
-
-  return (
-    <View style={[styles.step_bar, stepStyle ]} />
-  );
-}
-
 const getWidth = Dimensions.get("window").width;
-const stepWidth = getWidth - (getWidth * 0.73);
 const checkboxWidth = getWidth - (getWidth * 0.93);
 
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  sub_container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: Platform.OS === "ios" ? "6%" : "10%"
-  },
-  step_bar_container: {
-    flexDirection: "row",
-    paddingLeft: 14
-  },
-  step_bar: {
-    height: 20,
-    width: stepWidth
   },
   wrapper_container: {
     marginTop: Platform.OS === "ios" ? "20%" : "6%",

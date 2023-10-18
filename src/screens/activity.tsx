@@ -9,11 +9,15 @@ import { NavigationProps } from '../types'
 import CustomButton from '../components/custom-button'
 import { BottomSheet } from "react-native-btr";
 import { useFocusEffect } from '@react-navigation/native'
+import ProgressBar from '../components/progress-bar'
+import Appointment from '../components/appointment'
 
 const Activity = ({ navigation }: NavigationProps) => {
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
   const [index, setIndex] = useState<number>();
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
+  const [appointment, setAppointment] = useState(false);
+  const [ currentStep, setCurrentStep ] = useState(1);
  
   const getFormattedDate = () => {
     const monthNames = [
@@ -37,6 +41,7 @@ const Activity = ({ navigation }: NavigationProps) => {
   const handleSave = ()=> {
     if (index) {
       setVisible(true);
+      // setAppointment(true);
     } else {
       Alert.alert("Error", "Please indicate whether you used contraception or not")
     }
@@ -44,7 +49,11 @@ const Activity = ({ navigation }: NavigationProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      return () => setIndex(0); 
+      return () => {
+        setIndex(0); 
+        setVisible(false);
+        setAppointment(false)
+      }
     }, [navigation])
   );
 
@@ -53,91 +62,102 @@ const Activity = ({ navigation }: NavigationProps) => {
   }
 
   return (
-    <SafeAreaView style={{ marginHorizontal: "5%" }} onLayout={onLayoutRootView}>
+    <SafeAreaView style={{ marginHorizontal: !appointment ? "5%" : 0 }} onLayout={onLayoutRootView}>
       <StatusBar style='auto' />
 
-      <GoBack />
-      <Text style={styles.activity}>NEW SEXUAL ACTIVITY</Text>
+      {!appointment ? 
+        <View>
+          <GoBack />
+          <Text style={styles.activity}>NEW SEXUAL ACTIVITY</Text>
 
-      <View style={styles.line} />
-      <View style={styles.flex}>
-        <Text style={styles.sub_text1}>Date</Text>
-        <Text style={styles.sub_text2}>{getFormattedDate()}</Text>
-      </View>
+          <View style={styles.line} />
+          <View style={styles.flex}>
+            <Text style={styles.sub_text1}>Date</Text>
+            <Text style={styles.sub_text2}>{getFormattedDate()}</Text>
+          </View>
 
-      <View style={styles.line} />
-      <View style={styles.flex}>
-        <Text style={styles.sub_text1}>Activity</Text>
-        <Text style={styles.sub_text2}>Sex</Text>
-      </View>
+          <View style={styles.line} />
+          <View style={styles.flex}>
+            <Text style={styles.sub_text1}>Activity</Text>
+            <Text style={styles.sub_text2}>Sex</Text>
+          </View>
 
-      <View style={styles.line} />
-      <View style={styles.flex}>
-        <Text style={styles.sub_text1}>Contraception</Text>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity onPress={()=>setIndex(1)}
-            style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
-            { backgroundColor: index === 1 ? colors.blue : "rgba(31, 29, 110, 0.50)", padding: "5%", borderRadius: 10 }]}
-          >
-            <Text style={{ fontFamily: index === 1 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Used</Text>
-          </TouchableOpacity>
+          <View style={styles.line} />
+          <View style={styles.flex}>
+            <Text style={styles.sub_text1}>Contraception</Text>
+            <View style={styles.btnContainer}>
+              <TouchableOpacity onPress={()=>setIndex(1)}
+                style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
+                { backgroundColor: index === 1 ? colors.blue : "rgba(31, 29, 110, 0.50)", padding: "5%", borderRadius: 10 }]}
+              >
+                <Text style={{ fontFamily: index === 1 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Used</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity onPress={()=>setIndex(2)}
-            style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
-            { backgroundColor: index === 2 ? colors.cancelColor : colors.btrColor, padding: "5%", borderRadius: 10 }]} 
-          >
-            <Text style={{ fontFamily: index === 2 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Not used</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.line} />
+              <TouchableOpacity onPress={()=>setIndex(2)}
+                style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
+                { backgroundColor: index === 2 ? colors.cancelColor : colors.btrColor, padding: "5%", borderRadius: 10 }]} 
+              >
+                <Text style={{ fontFamily: index === 2 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Not used</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.line} />
 
-      <View style={styles.nav_btns}>
-        <CustomButton 
-          title='CANCEL'
-          bgStyle="cancel"
-          onPress={()=>navigation.goBack()}
-          style={{ width: "48%" }}
-        />
-
-        <CustomButton 
-          title='SAVE'
-          bgStyle="blue"
-          onPress={()=>handleSave()}
-          style={{ width: "48%" }}
-        />
-      </View>
-
-      <BottomSheet
-        visible={visible}
-        onBackButtonPress={toggle}
-        onBackdropPress={toggle}
-      >
-        <View style={styles.bottomSheet}>
-          <Text style={{ fontFamily: "pro-bold", color: colors.black, fontSize: getFontSize(0.035), maxWidth: "100%", width: "80%", margin: "auto" }}>
-            If you've had unprotected sex, it's important to get tested for sexually transmitted infections (STIs). 
-            Schedule a sexual health check-up today to make sure you're healthy.
-          </Text>
-
-          <Text style={{  maxWidth: "100%", width: "80%", margin: "auto", fontFamily: "pro-black", color: colors.blue, fontSize: getFontSize(0.04), paddingVertical: "10%", }}>Would you like to book an appointment?</Text>
-
-          <View style={styles.bottom_btns}>
+          <View style={styles.nav_btns}>
             <CustomButton 
-              title='LATER'
+              title='CANCEL'
               bgStyle="cancel"
-              onPress={()=>{toggle()}}
-              style={{ width: "45%" }}
+              onPress={()=>navigation.goBack()}
+              style={{ width: "48%" }}
             />
 
             <CustomButton 
-              title='OK'
+              title='SAVE'
               bgStyle="blue"
               onPress={()=>handleSave()}
-              style={{ width: "45%" }}
+              style={{ width: "48%" }}
             />
           </View>
-        </View>
-      </BottomSheet>
+
+          <BottomSheet
+            visible={visible}
+            onBackButtonPress={toggle}
+            onBackdropPress={toggle}
+          >
+            <View style={styles.bottomSheet}>
+              <Text style={{ fontFamily: "pro-bold", color: colors.black, fontSize: getFontSize(0.035), maxWidth: "100%", width: "80%", margin: "auto" }}>
+                If you've had unprotected sex, it's important to get tested for sexually transmitted infections (STIs). 
+                Schedule a sexual health check-up today to make sure you're healthy.
+              </Text>
+
+              <Text style={{  maxWidth: "100%", width: "80%", margin: "auto", fontFamily: "pro-black", color: colors.blue, fontSize: getFontSize(0.04), paddingVertical: "10%", }}>Would you like to book an appointment?</Text>
+
+              <View style={styles.bottom_btns}>
+                <CustomButton 
+                  title='LATER'
+                  bgStyle="cancel"
+                  onPress={()=>{toggle()}}
+                  style={{ width: "45%" }}
+                />
+
+                <CustomButton 
+                  title='OK'
+                  bgStyle="blue"
+                  onPress={()=>setAppointment(true)}
+                  style={{ width: "45%" }}
+                />
+              </View>
+            </View>
+          </BottomSheet>
+        </View> : 
+
+        <Appointment 
+          currentStep={currentStep}
+          setAppointment={setAppointment}
+          setVisible={setVisible}
+          setCurrentStep={(setCurrentStep)}
+        />
+      }
     </SafeAreaView>
   )
 }

@@ -50,5 +50,23 @@ export type IconProps = {
 export type StepProps = {
     isFilled: boolean, 
     isFirst: boolean, 
-    isLast: boolean 
+    isLast: boolean,
+    stepWidthProps?: any
+}
+
+// Progress bar type
+export type ProgressBarProps = {
+    onPress: ()=> void,
+    currentStep: number,
+    isLast: number,
+    stepWidth?: any
+    [props: string]: any
+}
+
+// Appointment type
+export type AppointmentProps = {
+    currentStep: number, 
+    setAppointment: any, 
+    setVisible: any, 
+    setCurrentStep: any
 }
