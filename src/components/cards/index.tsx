@@ -2,9 +2,9 @@ import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import React from 'react'
 import colors from '../../assets/themes/colors'
 
-const Cards = ({ children }: { children: React.ReactNode}) => {
+const Cards = ({ children, style, onPress }: { children: React.ReactNode, style?: any, onPress?: ()=>void }) => {
   return (
-    <TouchableOpacity style={[styles.container, Platform.OS === "ios" ? styles.iosBox : styles.androidBox ]}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, style, Platform.OS === "ios" ? styles.iosBox : styles.androidBox ]}>
       {children}
     </TouchableOpacity>
   )

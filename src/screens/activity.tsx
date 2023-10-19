@@ -9,7 +9,6 @@ import { NavigationProps } from '../types'
 import CustomButton from '../components/custom-button'
 import { BottomSheet } from "react-native-btr";
 import { useFocusEffect } from '@react-navigation/native'
-import ProgressBar from '../components/progress-bar'
 import Appointment from '../components/appointment'
 
 const Activity = ({ navigation }: NavigationProps) => {
@@ -62,63 +61,64 @@ const Activity = ({ navigation }: NavigationProps) => {
   }
 
   return (
-    <SafeAreaView style={{ marginHorizontal: !appointment ? "5%" : 0 }} onLayout={onLayoutRootView}>
+    <SafeAreaView style={{ marginHorizontal: !appointment ? "5%" : 0, flex: 1 }} onLayout={onLayoutRootView}>
       <StatusBar style='auto' />
 
       {!appointment ? 
-        <View>
-          <GoBack />
-          <Text style={styles.activity}>NEW SEXUAL ACTIVITY</Text>
+        <>
+          <View>
+            <GoBack />
+            <Text style={styles.activity}>NEW SEXUAL ACTIVITY</Text>
 
-          <View style={styles.line} />
-          <View style={styles.flex}>
-            <Text style={styles.sub_text1}>Date</Text>
-            <Text style={styles.sub_text2}>{getFormattedDate()}</Text>
-          </View>
-
-          <View style={styles.line} />
-          <View style={styles.flex}>
-            <Text style={styles.sub_text1}>Activity</Text>
-            <Text style={styles.sub_text2}>Sex</Text>
-          </View>
-
-          <View style={styles.line} />
-          <View style={styles.flex}>
-            <Text style={styles.sub_text1}>Contraception</Text>
-            <View style={styles.btnContainer}>
-              <TouchableOpacity onPress={()=>setIndex(1)}
-                style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
-                { backgroundColor: index === 1 ? colors.blue : "rgba(31, 29, 110, 0.50)", padding: "5%", borderRadius: 10 }]}
-              >
-                <Text style={{ fontFamily: index === 1 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Used</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={()=>setIndex(2)}
-                style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
-                { backgroundColor: index === 2 ? colors.cancelColor : colors.btrColor, padding: "5%", borderRadius: 10 }]} 
-              >
-                <Text style={{ fontFamily: index === 2 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Not used</Text>
-              </TouchableOpacity>
+            <View style={styles.line} />
+            <View style={styles.flex}>
+              <Text style={styles.sub_text1}>Date</Text>
+              <Text style={styles.sub_text2}>{getFormattedDate()}</Text>
             </View>
-          </View>
-          <View style={styles.line} />
 
-          <View style={styles.nav_btns}>
-            <CustomButton 
-              title='CANCEL'
-              bgStyle="cancel"
-              onPress={()=>navigation.goBack()}
-              style={{ width: "48%" }}
-            />
+            <View style={styles.line} />
+            <View style={styles.flex}>
+              <Text style={styles.sub_text1}>Activity</Text>
+              <Text style={styles.sub_text2}>Sex</Text>
+            </View>
 
-            <CustomButton 
-              title='SAVE'
-              bgStyle="blue"
-              onPress={()=>handleSave()}
-              style={{ width: "48%" }}
-            />
-          </View>
+            <View style={styles.line} />
+            <View style={styles.flex}>
+              <Text style={styles.sub_text1}>Contraception</Text>
+              <View style={styles.btnContainer}>
+                <TouchableOpacity onPress={()=>setIndex(1)}
+                  style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
+                  { backgroundColor: index === 1 ? colors.blue : "rgba(31, 29, 110, 0.50)", padding: "5%", borderRadius: 10 }]}
+                >
+                  <Text style={{ fontFamily: index === 1 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Used</Text>
+                </TouchableOpacity>
 
+                <TouchableOpacity onPress={()=>setIndex(2)}
+                  style={[Platform.OS === "ios" ? styles.iosBox : styles.androidBox,
+                  { backgroundColor: index === 2 ? colors.cancelColor : colors.btrColor, padding: "5%", borderRadius: 10 }]} 
+                >
+                  <Text style={{ fontFamily: index === 2 ? "pro-bold" : "pro-light", fontSize: getFontSize(0.025), color: colors.white }}>Not used</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.line} />
+
+            <View style={styles.nav_btns}>
+              <CustomButton 
+                title='CANCEL'
+                bgStyle="cancel"
+                onPress={()=>navigation.goBack()}
+                style={{ width: "48%" }}
+              />
+
+              <CustomButton 
+                title='SAVE'
+                bgStyle="blue"
+                onPress={()=>handleSave()}
+                style={{ width: "48%" }}
+              />
+            </View>
+          </View> 
           <BottomSheet
             visible={visible}
             onBackButtonPress={toggle}
@@ -149,7 +149,7 @@ const Activity = ({ navigation }: NavigationProps) => {
               </View>
             </View>
           </BottomSheet>
-        </View> : 
+        </> : 
 
         <Appointment 
           currentStep={currentStep}
