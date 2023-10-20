@@ -178,7 +178,8 @@ const styles = StyleSheet.create({
   line: {
     height: 1, 
     backgroundColor: colors.lineColor, 
-    width: getWidth, marginHorizontal: "-5%" 
+    width: getWidth, 
+    marginHorizontal: "-5%" 
   },
   flex: {
     flexDirection: "row",

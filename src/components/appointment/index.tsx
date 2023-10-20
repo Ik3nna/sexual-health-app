@@ -1,18 +1,21 @@
 import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ProgressBar from '../progress-bar'
 import { AppointmentProps } from '../../types'
 import { Image } from 'react-native'
 import Cards from '../cards'
 import { useCustomFonts } from '../../hooks/useCustomFonts'
 import MapView, { Marker } from 'react-native-maps'
+import { getFontSize } from '../../utils/getFontSize'
+import Icon from '../icons'
+import colors from '../../assets/themes/colors'
+import CustomButton from '../custom-button'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import DatePicker from '../date-picker'
 
 // assets
 import location from "../../assets/images/location-icon.png";
 import map from "../../assets/images/map-icon.png";
-import { getFontSize } from '../../utils/getFontSize'
-import Icon from '../icons'
-import colors from '../../assets/themes/colors'
 
 const centres = [
     { 
@@ -58,7 +61,7 @@ const centres = [
         longitude: -0.02072495945933494 
     },
     { 
-        title: "Union Diagnostics and Clinical Services", 
+        title: "Union Diag. and Clinical Services", 
         subTitle: "Health in Lagos, Hospital in Lagos, Hospital Equipment in Lagos, Diagnostic in Lagos",
         address: "80, Agege Motor Road, Lagos, Lagos",
         latitude: 6.636880161671027,    
@@ -72,6 +75,19 @@ const centres = [
         longitude: 3.439155003467879 
     },
 ]
+const tests = [
+    { title: "STIs Basic labor test", price: "$15.99" },
+    { title: "STIs Complete labor test", price: "$23.50" },
+    { title: "HIV PoC Rapidtest", price: "$39.99" },
+    { title: "HIV labor test", price: "$59.99" },
+    { title: "Chlamyidien PoC Rapidtest", price: "$39.90" },
+    { title: "Hepatitis B PoC Rapidtest", price: "$59.99" },
+    { title: "Hepatitis B PoC Labor test", price: "$89.99" },
+]
+const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
@@ -82,11 +98,55 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
   const [toggleSwitch, setToggleSwitch] = useState(false);
   const [pressedCardIndex, setPressedCardIndex] = useState<number | null>(null)
   const getWidth = Dimensions.get("window").width;
+  const navigation = useNavigation();
 
   const handleNextStep = (index: number)=> {
     setPressedCardIndex(index)
     setCurrentStep((prev: number)=>prev + 1)
   }
+
+  const [appointmentDates, setAppointmentDates] = useState<any>([]);
+  const numDatesToShow = 4;
+
+  const calculateNextAppointments = (numDays: number) => {
+    const today = new Date();
+    const availableDates = [];
+
+    while (availableDates.length < numDays) {
+      today.setDate(today.getDate() + 1);
+
+      // Skip Sundays
+      if (today.getDay() === 0) {
+        continue;
+      }
+
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = monthNames[today.getMonth()];
+      const yy = String(today.getFullYear()).slice(-2);
+
+      availableDates.push(`${dd}, ${mm} ${yy}`);
+    }
+
+    return availableDates;
+  };
+
+  const showMoreAppointments = () => {
+    const additionalDates = calculateNextAppointments(numDatesToShow);
+    setAppointmentDates([...appointmentDates, ...additionalDates]);
+  };
+
+  useEffect(() => {
+    const initialDates = calculateNextAppointments(numDatesToShow);
+    setAppointmentDates(initialDates);
+  }, []); // Run on component mount
+
+//   useFocusEffect(
+//     useCallback(() => {
+//       return () => {
+//        setCurrentStep(1);
+//       }
+//     }, [navigation])
+//   );
   
   if (!fontsLoaded) {
     return null;
@@ -160,10 +220,95 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
         }
 
         {currentStep === 2 && pressedCardIndex !== null &&
-            <View>
-                <Text>{centres[pressedCardIndex].title}</Text>
-                <Text>{centres[pressedCardIndex].subTitle}</Text>
+            <View style={{ marginHorizontal: "6%"  }}>
+                <View style={{ rowGap: 10, marginVertical: "6%" }}>
+                    <Text style={{ textAlign: "center", fontFamily: "pro-black", fontSize: getFontSize(0.027) }}>{centres[pressedCardIndex].title}</Text>
+                    <Text style={{ textAlign: "center", fontFamily: "pro-bold", width: "90%", marginLeft: "auto", marginRight: "auto", fontSize: getFontSize(0.023) }}>{centres[pressedCardIndex].subTitle}</Text>
+                </View>
+                
+                <View>
+                    <Cards>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: "4%" }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", columnGap: 5 }}>
+                                <Icon type="ionicons" name="ios-location-outline" size={20} color={colors.black} />
+                                <Text style={{ fontFamily: "pro-bold", color: colors.black, fontSize: getFontSize(0.021) }}>Address</Text>
+                            </View>
+                            <Text style={{ fontFamily: "pro-black", color: "#B03A2A", fontSize: getFontSize(0.021), textDecorationLine: "underline", textDecorationColor: "#B03A2A" }}>MORE INFO</Text>
+                        </View>
+
+                        <Text style={{ fontFamily: "pro-light", color: colors.black, fontSize: getFontSize(0.021) }}>{centres[pressedCardIndex].title}</Text>
+                        <Text style={{ fontFamily: "pro-light", color: colors.black, fontSize: getFontSize(0.021) }}>{centres[pressedCardIndex].address}</Text>
+                    </Cards>
+
+                    <Cards style={{ marginVertical: "6%" }}>
+                        <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "4%" }}>
+                            <View style={{ flexDirection: "row", alignItems: "flex-start", columnGap: 5 }}>
+                                <Icon type="ionicons" name="ios-people-outline" size={20} color={colors.black} />
+                                <View>
+                                    <Text style={{ fontFamily: "pro-bold", color: colors.black, fontSize: getFontSize(0.021) }}>Patient & more</Text>
+                                    <Text style={{ fontFamily: "pro-bold", color: colors.black, fontSize: getFontSize(0.021) }}>Information</Text>
+                                </View>
+                            </View>
+                            
+                            <Text style={{ fontFamily: "pro-black", color: "#B03A2A", fontSize: getFontSize(0.021), textDecorationLine: "underline", textDecorationColor: "#B03A2A" }}>MORE INFO</Text>
+                        </View>
+                        
+                        <Text style={{ fontFamily: "pro-light", color: colors.black, fontSize: getFontSize(0.021) }}>Dear Patient,</Text>
+                        <Text style={{ fontFamily: "pro-light", color: colors.black, fontSize: getFontSize(0.02) }}>We are pleased to welcome you to "{centres[pressedCardIndex].title}"</Text>
+                    </Cards>
+                </View>
             </View>
+        }
+
+        {currentStep === 3 && pressedCardIndex !== null &&
+            <View style={{ marginHorizontal: "6%" }}>
+                <View style={{ rowGap: 10, marginVertical: "6%" }}>
+                    <Text style={{ textAlign: "center", fontFamily: "pro-black", fontSize: getFontSize(0.027) }}>{centres[pressedCardIndex].title}</Text>
+                    <Text style={{ textAlign: "center", fontFamily: "pro-bold", width: "90%", marginLeft: "auto", marginRight: "auto", fontSize: getFontSize(0.023) }}>{centres[pressedCardIndex].subTitle}</Text>
+                </View>
+
+               <View style={styles.textContainer}>
+                    {tests.map((item, index)=>
+                        <View key={index}>
+                            <View style={{ flexDirection: "row", padding: "4.55%", alignItems: "center", justifyContent:"space-between"}}>
+                                <Text style={{ fontFamily: "pro-bold", fontSize: getFontSize(0.02) }}>{item.title}</Text>
+                                <Text style={{ fontFamily: "pro-bold", fontSize: getFontSize(0.018) }}>{item.price}</Text>
+                            </View>
+                            {index === 6 ? <View /> : <View style={{ height: 1, backgroundColor: colors.lineColor }} />}
+                        </View>
+                    )}
+                </View>
+            </View>
+        }
+
+        {currentStep === 4 && pressedCardIndex !== null && 
+            <View style={{ marginHorizontal: "6%" }}>
+                <View style={{ rowGap: 10, marginVertical: "6%" }}>
+                    <Text style={{ color: colors.black, fontFamily: "pro-black", fontSize: getFontSize(0.035) }}>SELECT THE <Text style={{ color: colors.dateColor }}>DATE AND HOUR</Text></Text>
+                    <Text style={{ color: colors.black, fontFamily: "pro-black", fontSize: getFontSize(0.035) }}>FOR THE APPOINTMENT</Text>
+                </View>
+
+                {appointmentDates.map((item: string, index: number)=>
+                    <View key={index}>
+                        <DatePicker
+                            item={item}
+                            index={index}
+                            showMore={showMoreAppointments}
+                        />
+                    </View>
+                )}
+            
+            </View>
+        }
+
+        {currentStep > 1 &&
+            <CustomButton 
+                title={currentStep === 2 ? "BOOK AN APPOINTMENT" : 'CONTINUE'}
+                bgStyle="blue"
+                onPress={()=>setCurrentStep((prev: number)=> prev + 1)}
+                mt="14%"
+                style={{ marginHorizontal: "6%", }}
+            />
         }
     </ScrollView>
   )
@@ -172,5 +317,8 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
 export default Appointment
 
 const styles = StyleSheet.create({
-    
+    textContainer: {
+        backgroundColor: colors.tabBgColor,
+        borderRadius: 15
+    },
 })
