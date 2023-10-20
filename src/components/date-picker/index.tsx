@@ -5,10 +5,16 @@ import colors from '../../assets/themes/colors'
 import TimePicker from '../time-picker'
 import { useCustomFonts } from '../../hooks/useCustomFonts'
 import { getFontSize } from '../../utils/getFontSize'
+import { useGlobalContext } from '../../context/useGlobalContext'
 
 const DatePicker = ({ item }: { item: string }) => {
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
   const [toggleArrowButton, setToggleArrowButton] = useState(false);
+  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+
+  const handleTimeChange = (time: Date) => {
+    setSelectedTime(time);
+  };
 
   if (!fontsLoaded) {
     return null;
@@ -23,12 +29,17 @@ const DatePicker = ({ item }: { item: string }) => {
         </TouchableOpacity>
       </View>
       
-      {toggleArrowButton && 
+      {toggleArrowButton &&
         <>
           <View style={styles.line} />
 
           <View>
-            <TimePicker />
+            <TimePicker 
+              item={item} 
+              st={selectedTime}
+              sst={setSelectedTime}
+              onTimeChange={handleTimeChange}
+            />
         </View> 
         </>     
       }
@@ -41,7 +52,7 @@ export default DatePicker
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "rgba(153, 60, 64, 0.60)",
-    borderRadius: 10
+    borderRadius: 10, 
   },
   flex: {
     flexDirection: "row",

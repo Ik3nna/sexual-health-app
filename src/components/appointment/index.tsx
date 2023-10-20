@@ -16,6 +16,7 @@ import DatePicker from '../date-picker'
 // assets
 import location from "../../assets/images/location-icon.png";
 import map from "../../assets/images/map-icon.png";
+import { useGlobalContext } from '../../context/useGlobalContext'
 
 const centres = [
     { 
@@ -103,6 +104,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
   const [pressedCardIndex, setPressedCardIndex] = useState<number | null>(null)
   const getWidth = Dimensions.get("window").width;
   const navigation = useNavigation();
+  const { appointmentDetails } = useGlobalContext();
 
   const handleNextStep = (index: number)=> {
     setPressedCardIndex(index)
@@ -289,9 +291,9 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
             </View>
         }
 
-        {currentStep === 4 && pressedCardIndex !== null && 
+        {currentStep === 4 && pressedCardIndex !== null &&
             <View style={{ marginHorizontal: "6%" }}>
-                <View style={{ rowGap: 10, marginVertical: "6%" }}>
+                <View style={{ rowGap: 10, marginVertical: "6%", marginBottom: "18%" }}>
                     <Text style={{ color: colors.black, fontFamily: "pro-black", fontSize: getFontSize(0.035) }}>SELECT THE <Text style={{ color: colors.dateColor }}>DATE AND HOUR</Text></Text>
                     <Text style={{ color: colors.black, fontFamily: "pro-black", fontSize: getFontSize(0.035) }}>FOR THE APPOINTMENT</Text>
                 </View>
@@ -308,12 +310,27 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
             </View>
         }
 
+        {currentStep === 5 &&
+            <View>
+
+            </View>
+        }
+
         {currentStep > 1 &&
             <CustomButton 
                 title={currentStep === 2 ? "BOOK AN APPOINTMENT" : 'CONTINUE'}
                 bgStyle="blue"
-                onPress={()=>setCurrentStep((prev: number)=> prev + 1)}
-                mt="14%"
+                onPress={()=>{
+                    if (currentStep !== 4) {
+                        setCurrentStep((prev: number)=> prev + 1)
+                    }
+                    else {
+                        if (appointmentDetails.time !== undefined) {
+                            setCurrentStep((prev: number)=> prev + 1)
+                        }
+                    }
+                }}
+                mt={currentStep === 4 ? "25%" : "14%"}
                 style={{ marginHorizontal: "6%", }}
             />
         }

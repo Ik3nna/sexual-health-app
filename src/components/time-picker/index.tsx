@@ -3,13 +3,14 @@ import React, { useState } from 'react'
 import colors from '../../assets/themes/colors';
 import { getFontSize } from '../../utils/getFontSize';
 import { useCustomFonts } from '../../hooks/useCustomFonts';
+import { useGlobalContext } from '../../context/useGlobalContext';
 
-const TimePicker = () => {
+const TimePicker = ({ item, st, sst, onTimeChange }: { item: string, st: Date | null, sst: any, onTimeChange: (time: Date) => void }) => {
     const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+    const { appointmentDetails, setAppointmentDetails } = useGlobalContext();
     const initialTime = new Date();
     initialTime.setHours(12, 0, 0, 0);
   
-    const [selectedTime, setSelectedTime] = useState<Date | null>(null);
     const [showMore, setShowMore] = useState<boolean>(false);
     const timeIncrement = 5; // 5 minutes increment
     const endTime = new Date(initialTime);
@@ -28,28 +29,30 @@ const TimePicker = () => {
     };
 
     const formatTime = (time: Date) => {
-        const hours = time
-        .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        .replace(" ", "");
-        return hours;
+      const hours = time
+      .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      .replace(" ", "");
+      return hours;
     };
       
     const handleTimeClick = (time: Date) => {
-      setSelectedTime(time);
+      sst(time);
+      setAppointmentDetails({day: item, time: time})
+      onTimeChange(time);
     };
   
     const renderTimeSlot = (time: Date) => {
-      const isSelected = selectedTime && selectedTime.getTime() === time.getTime();
+      const isSelected = st && st.getTime() === time.getTime();
       
       return (
         <>
-            <TouchableOpacity
-                key={time.toString()}
-                onPress={() => handleTimeClick(time)}
-                style={styles.time}
+          <TouchableOpacity
+              key={time.toString()}
+              onPress={() => handleTimeClick(time)}
+              style={styles.time}
             >
-                <Text style={{ textAlign: "center", fontSize: getFontSize(0.02), fontFamily: "pro-bold", color: isSelected ? colors.white : colors.black }}>{formatTime(time)}</Text>
-            </TouchableOpacity>
+              <Text style={{ textAlign: "center", fontSize: getFontSize(0.02), fontFamily: "pro-bold", color: isSelected ? colors.white : colors.black }}>{formatTime(time)}</Text>
+          </TouchableOpacity>
         </>
       );
     };
