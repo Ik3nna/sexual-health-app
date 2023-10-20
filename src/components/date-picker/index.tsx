@@ -3,26 +3,34 @@ import React, { useState } from 'react'
 import Icon from '../icons'
 import colors from '../../assets/themes/colors'
 import TimePicker from '../time-picker'
+import { useCustomFonts } from '../../hooks/useCustomFonts'
+import { getFontSize } from '../../utils/getFontSize'
 
-const DatePicker = ({ item, index, showMore }: { item: string, index: number, showMore: ()=>void }) => {
+const DatePicker = ({ item }: { item: string }) => {
+  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
   const [toggleArrowButton, setToggleArrowButton] = useState(false);
-  
-  console.log(item)
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
-    <View>
-      <View>
-        <Text>{item}</Text>
+    <View onLayout={onLayoutRootView} style={styles.container}>
+      <View style={styles.flex}>
+        <Text style={styles.date}>{item}</Text>
         <TouchableOpacity onPress={()=>setToggleArrowButton(prev=>!prev)}>
-            <Icon type="mi" name={toggleArrowButton ? "arrow-drop-up" : "arrow-drop-down"} />
+            <Icon type="mi" name={toggleArrowButton ? "arrow-drop-up" : "arrow-drop-down"} size={24} />
         </TouchableOpacity>
       </View>
-      <View style={styles.line} />
       
       {toggleArrowButton && 
-        <View>
+        <>
+          <View style={styles.line} />
+
+          <View>
             <TimePicker />
-        </View>      
+        </View> 
+        </>     
       }
     </View>
   )
@@ -31,8 +39,22 @@ const DatePicker = ({ item, index, showMore }: { item: string, index: number, sh
 export default DatePicker
 
 const styles = StyleSheet.create({
-    line: {
-        height: 1, 
-        backgroundColor: colors.lineColor
-    }
+  container: {
+    backgroundColor: "rgba(153, 60, 64, 0.60)",
+    borderRadius: 10
+  },
+  flex: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: "3%"
+  },
+  date: {
+    color: colors.black,
+    fontFamily: "pro-bold",
+    fontSize: getFontSize(0.022)
+  },
+  line: {
+    height: 1, 
+    backgroundColor: colors.lineColor
+  }
 })

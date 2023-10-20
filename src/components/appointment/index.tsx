@@ -88,6 +88,10 @@ const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
+const dayNames = [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+];
+
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
@@ -107,9 +111,10 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
 
   const [appointmentDates, setAppointmentDates] = useState<any>([]);
   const numDatesToShow = 4;
+  const [lastDate, setLastDate] = useState<any>(null);
 
-  const calculateNextAppointments = (numDays: number) => {
-    const today = new Date();
+  const calculateNextAppointments = (numDays: number, lastDate: any) => {
+    const today = lastDate || new Date();
     const availableDates = [];
 
     while (availableDates.length < numDays) {
@@ -122,23 +127,26 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
 
       const dd = String(today.getDate()).padStart(2, '0');
       const mm = monthNames[today.getMonth()];
-      const yy = String(today.getFullYear()).slice(-2);
+      const yy = String(today.getFullYear());
+      const day = dayNames[today.getDay()];
 
-      availableDates.push(`${dd}, ${mm} ${yy}`);
+      availableDates.push(`${day} ${dd}, ${mm} ${yy}`);
     }
 
-    return availableDates;
+    return { dates: availableDates, lastDate: today };
   };
 
   const showMoreAppointments = () => {
-    const additionalDates = calculateNextAppointments(numDatesToShow);
-    setAppointmentDates([...appointmentDates, ...additionalDates]);
+    const { dates, lastDate: newLastDate }= calculateNextAppointments(numDatesToShow, lastDate);
+    setAppointmentDates([...appointmentDates, ...dates]);
+    setLastDate(newLastDate)
   };
 
   useEffect(() => {
-    const initialDates = calculateNextAppointments(numDatesToShow);
-    setAppointmentDates(initialDates);
-  }, []); // Run on component mount
+    const { dates, lastDate: newLastDate }= calculateNextAppointments(numDatesToShow, lastDate);
+    setAppointmentDates(dates);
+    setLastDate(newLastDate)
+  }, []);
 
 //   useFocusEffect(
 //     useCallback(() => {
@@ -289,15 +297,14 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                 </View>
 
                 {appointmentDates.map((item: string, index: number)=>
-                    <View key={index}>
-                        <DatePicker
-                            item={item}
-                            index={index}
-                            showMore={showMoreAppointments}
-                        />
+                    <View key={index} style={{ marginBottom: "3%" }}>
+                        <DatePicker item={item} />
                     </View>
                 )}
-            
+
+                <TouchableOpacity style={styles.more} onPress={()=>showMoreAppointments()}>
+                    <Text style={{ fontSize: getFontSize(0.023), textDecorationLine: "underline", fontFamily: "pro-bold", textAlign: "center", color: colors.black }}>MORE DATES</Text>
+                </TouchableOpacity>
             </View>
         }
 
@@ -321,4 +328,10 @@ const styles = StyleSheet.create({
         backgroundColor: colors.tabBgColor,
         borderRadius: 15
     },
+    more: {
+        backgroundColor: "rgba(153, 60, 64, 0.60)",
+        borderRadius: 10,
+        marginVertical: "4%",
+        paddingVertical: "3%"
+    }
 })
