@@ -13,5 +13,6 @@ export default {
     lineColor: "#BCC6D3",
     cancelColor: "#C34629",
     btrColor: "#D28774",
-    dateColor: "#B03A2A"
+    dateColor: "#B03A2A",
+    formInputColor: "rgba(153, 60, 64, 0.60)"
 }

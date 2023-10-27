@@ -12,11 +12,13 @@ import colors from '../../assets/themes/colors'
 import CustomButton from '../custom-button'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import DatePicker from '../date-picker'
+import { BottomSheet } from 'react-native-btr'
 
 // assets
 import location from "../../assets/images/location-icon.png";
 import map from "../../assets/images/map-icon.png";
 import { useGlobalContext } from '../../context/useGlobalContext'
+import Dropdown from '../dropdown'
 
 const centres = [
     { 
@@ -105,6 +107,8 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
   const getWidth = Dimensions.get("window").width;
   const navigation = useNavigation();
   const { appointmentDetails } = useGlobalContext();
+  const [viewBs, setViewBs] = useState(false);
+  const [bsIndex, setBsIndex] = useState(0);
 
   const handleNextStep = (index: number)=> {
     setPressedCardIndex(index)
@@ -170,12 +174,15 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                 setAppointment(false)
                 setVisible(false)
               } else {
+                if (currentStep === 5) {
+                    setViewBs(false);
+                }
                 setCurrentStep((prev: number) => prev - 1);
               }
             }}
             currentStep={currentStep}
-            isLast={9}
-            stepWidth={getWidth - (getWidth * 0.92)}
+            isLast={7}
+            stepWidth={getWidth - (getWidth * 0.9)}
             colG={true}
         />
 
@@ -307,12 +314,59 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                 <TouchableOpacity style={styles.more} onPress={()=>showMoreAppointments()}>
                     <Text style={{ fontSize: getFontSize(0.023), textDecorationLine: "underline", fontFamily: "pro-bold", textAlign: "center", color: colors.black }}>MORE DATES</Text>
                 </TouchableOpacity>
-            </View>
-        }
 
-        {currentStep === 5 &&
-            <View>
+                <BottomSheet
+                    visible={viewBs}
+                    onBackButtonPress={()=>{setViewBs(!viewBs)}}
+                    onBackdropPress={()=>{setViewBs(!viewBs)}}
+                >
+                    <View>
+                        {bsIndex === 0 &&
+                            <View style={styles.bottomSheet}>
+                                <Text style={{ fontFamily: "pro-black", textAlign: "center", color: colors.blue, fontSize: getFontSize(0.04), paddingVertical: "7%", marginTop: "3%" }}>
+                                    BEFORE BOOKING, PLEASE NOTE THE FOLLOWING
+                                </Text>
 
+                                <Text style={{fontFamily: "pro-light", textAlign: "center", color: colors.black, fontSize: getFontSize(0.025)}}>
+                                    If you are unable to keep your appointment, please cancel 24 hours in advance.
+                                </Text>
+
+                                <CustomButton 
+                                    title='CONTINUE'
+                                    bgStyle="blue"
+                                    onPress={()=>{setBsIndex(1)}}
+                                    mt="10%"
+                                />
+                            </View>
+                        }
+
+                        {bsIndex === 1 &&
+                            <View style={styles.formBs}>
+                                <Text style={{ fontFamily: "pro-black", textAlign: "center", color: colors.blue, fontSize: getFontSize(0.04), paddingVertical: "7%", marginTop: "3%" }}>
+                                    PLEASE, FILL OUT THE FORM
+                                </Text>
+
+                                <View>
+                                    <Dropdown 
+                                        label='Gender'
+                                        content={[
+                                            "Male",
+                                            "Female",
+                                            "Others"
+                                        ]}
+                                    />
+                                </View>
+
+                                <CustomButton 
+                                    title='CONTINUE'
+                                    bgStyle="blue"
+                                    onPress={()=>setBsIndex(1)}
+                                    mt="10%"
+                                />
+                            </View>
+                        }
+                    </View>
+                </BottomSheet>
             </View>
         }
 
@@ -326,19 +380,22 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                     }
                     else {
                         if (appointmentDetails.time !== undefined) {
-                            setCurrentStep((prev: number)=> prev + 1)
+                            setViewBs(true)
                         }
                     }
                 }}
-                mt={currentStep === 4 ? "25%" : "14%"}
+                mt={"14%"}
                 style={{ marginHorizontal: "6%", }}
             />
         }
+        
+        {currentStep === 4 && <View style={{ marginVertical: "5%" }} />}
     </ScrollView>
   )
 }
 
 export default Appointment
+const getHeight = Dimensions.get("screen").height
 
 const styles = StyleSheet.create({
     textContainer: {
@@ -350,5 +407,19 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: "4%",
         paddingVertical: "3%"
+    },
+    bottomSheet: {
+        backgroundColor: colors.btrColor, 
+        height: getHeight - (0.6 * getHeight), 
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
+        paddingHorizontal: "3%"
+    },
+    formBs: {
+        backgroundColor: colors.btrColor, 
+        height: getHeight - (0.2 * getHeight), 
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
+        paddingHorizontal: "3%"
     }
 })
