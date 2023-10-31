@@ -4,11 +4,7 @@ import SelectDropdown from 'react-native-select-dropdown'
 import Icon from '../icons';
 import colors from '../../assets/themes/colors';
 import { getFontSize } from '../../utils/getFontSize';
-
-type DropdownProps = {
-    label: string;
-    content: any
-}
+import { DropdownProps } from '../../types';
 
 const Dropdown = ({ label, content }: DropdownProps) => {
   const [selected, setSelected] = useState(false)

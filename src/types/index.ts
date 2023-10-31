@@ -23,6 +23,7 @@ export type SignupFormDataProps = {
 export type CustomButtonProps = {
     title: string
     loading?: boolean
+    disabled?: boolean
     bgStyle?: any
     mt?: any,
     style?: any,
@@ -69,4 +70,17 @@ export type AppointmentProps = {
     setAppointment: any, 
     setVisible: any, 
     setCurrentStep: any
+}
+
+export type TimePickerProps = {
+    item: string, 
+    st: Date | null, 
+    sst: any, 
+    onTimeChange: (time: Date) => void 
+}
+
+// Dropdown type
+export type DropdownProps = {
+    label: string;
+    content: any
 }

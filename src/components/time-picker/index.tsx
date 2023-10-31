@@ -4,8 +4,9 @@ import colors from '../../assets/themes/colors';
 import { getFontSize } from '../../utils/getFontSize';
 import { useCustomFonts } from '../../hooks/useCustomFonts';
 import { useGlobalContext } from '../../context/useGlobalContext';
+import { TimePickerProps } from '../../types';
 
-const TimePicker = ({ item, st, sst, onTimeChange }: { item: string, st: Date | null, sst: any, onTimeChange: (time: Date) => void }) => {
+const TimePicker = ({ item, st, sst, onTimeChange }: TimePickerProps) => {
     const { fontsLoaded, onLayoutRootView } = useCustomFonts();
     const { appointmentDetails, setAppointmentDetails } = useGlobalContext();
     const initialTime = new Date();

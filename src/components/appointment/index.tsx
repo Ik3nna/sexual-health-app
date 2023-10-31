@@ -12,13 +12,17 @@ import colors from '../../assets/themes/colors'
 import CustomButton from '../custom-button'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import DatePicker from '../date-picker'
+import { useGlobalContext } from '../../context/useGlobalContext'
+import Dropdown from '../dropdown'
+import Input from '../input'
+import BTSInput from '../bts-input'
 import { BottomSheet } from 'react-native-btr'
+import Checkbox from 'expo-checkbox'
 
 // assets
 import location from "../../assets/images/location-icon.png";
 import map from "../../assets/images/map-icon.png";
-import { useGlobalContext } from '../../context/useGlobalContext'
-import Dropdown from '../dropdown'
+
 
 const centres = [
     { 
@@ -106,9 +110,11 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
   const [pressedCardIndex, setPressedCardIndex] = useState<number | null>(null)
   const getWidth = Dimensions.get("window").width;
   const navigation = useNavigation();
-  const { appointmentDetails } = useGlobalContext();
+  const { appointmentDetails } = useGlobalContext(); console.log(appointmentDetails.day);
   const [viewBs, setViewBs] = useState(false);
   const [bsIndex, setBsIndex] = useState(0);
+  const [formDeets, setFormDeets] = useState({ name: "",  lastName: "" });
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleNextStep = (index: number)=> {
     setPressedCardIndex(index)
@@ -148,6 +154,10 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
     setLastDate(newLastDate)
   };
 
+  const handleChangeFormDeets = (key: string, text: string) => {
+    setFormDeets({...formDeets, [key]: text})
+  }
+
   useEffect(() => {
     const { dates, lastDate: newLastDate }= calculateNextAppointments(numDatesToShow, lastDate);
     setAppointmentDates(dates);
@@ -181,8 +191,8 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
               }
             }}
             currentStep={currentStep}
-            isLast={7}
-            stepWidth={getWidth - (getWidth * 0.9)}
+            isLast={5}
+            stepWidth={getWidth - (getWidth * 0.87)}
             colG={true}
         />
 
@@ -346,7 +356,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                                     PLEASE, FILL OUT THE FORM
                                 </Text>
 
-                                <View>
+                                <View style={{ rowGap: 20 }}>
                                     <Dropdown 
                                         label='Gender'
                                         content={[
@@ -355,14 +365,153 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                                             "Others"
                                         ]}
                                     />
+
+                                    <BTSInput 
+                                        label='First Name'
+                                        value={formDeets.name}
+                                        onChange={(value: string)=> handleChangeFormDeets("name", value)}
+                                    />
+
+                                    <BTSInput 
+                                        label="Last Name"
+                                        value={formDeets.lastName}
+                                        onChange={(value: string)=> handleChangeFormDeets("lastName", value)}
+                                    />
+
+                                    <Dropdown 
+                                        label='Insurance'
+                                        content={[
+                                            "NHIS",
+                                            "Roctor",
+                                            "Others"
+                                        ]}
+                                    />
                                 </View>
 
                                 <CustomButton 
                                     title='CONTINUE'
                                     bgStyle="blue"
-                                    onPress={()=>setBsIndex(1)}
+                                    disabled={formDeets.name === "" || formDeets.lastName === "" ? true : false}
+                                    onPress={()=>setBsIndex(2)}
                                     mt="10%"
                                 />
+                            </View>
+                        }
+
+                        {bsIndex === 2 &&
+                            <View style={styles.prepareBs}>
+                                <Text style={{ fontFamily: "pro-black", textAlign: "center", color: colors.blue, fontSize: getFontSize(0.033), paddingVertical: "7%", marginTop: "3%" }}>
+                                    HOW TO PREPARE FOR A CHECK UP?
+                                </Text>
+
+                                <Text style={{ color: colors.black, paddingHorizontal: "5%", fontFamily: "pro-light", fontSize: getFontSize(0.024) }}>
+                                    Prior to the test, avoid any sexual activity for at least{" "} 
+                                    <Text style={styles.boldText}>24 hours</Text>.{" "}Some tests may require longer periods of abstinence.
+                                </Text>
+
+                                <Text style={{ color: colors.white, paddingTop: "5%", paddingHorizontal: "5%", fontFamily: "pro-bold", fontSize: getFontSize(0.024) }}>
+                                    To prepare for a sexual health blood test, follow these instructions:
+                                </Text>
+
+                                <View style={{ paddingHorizontal: "8%", rowGap: 5 }}>
+                                    <View style={{ flexDirection: "row", columnGap: 10}}>
+                                        <Text style={styles.itemText}>1.</Text>
+                                        <Text style={styles.itemText}>Fast for 
+                                            <Text style={styles.boldText}> 8-12 hours </Text>before the test(water is usually allowed).
+                                        </Text>
+                                    </View>
+
+                                    <View style={{ flexDirection: "row", columnGap: 10}}>
+                                        <Text style={styles.itemText}>2.</Text>
+                                        <Text style={styles.itemText}>Let your healthcare provider know if you are taking any
+                                            <Text style={styles.boldText}> 24 hours </Text>before the test.
+                                        </Text>
+                                    </View>
+
+                                    <View style={{ flexDirection: "row", columnGap: 10}}>
+                                        <Text style={styles.itemText}>3.</Text>
+                                        <Text style={styles.itemText}>Avoid alcohol, fatty foods, and strenuous exercise for
+                                            <Text style={styles.boldText}> medications </Text>or supplements, as some may affect the results of the test.
+                                        </Text>
+                                    </View>
+
+                                    <View style={{ flexDirection: "row", columnGap: 10}}>
+                                        <Text style={styles.itemText}>4.</Text>
+                                        <Text style={styles.itemText}>Be honest with your healthcare provider about your
+                                            <Text style={styles.boldText}> sexual history </Text>and any 
+                                            <Text style={styles.boldText}> symptoms</Text> you may be experiencing.
+                                        </Text>
+                                    </View>
+
+                                    <View style={{ flexDirection: "row", columnGap: 10}}>
+                                        <Text style={styles.itemText}>5.</Text>
+                                        <Text style={styles.itemText}>
+                                            Follow any additional instructions provided by your healthcare provider, 
+                                            such as scheduling the test for a certain time of day.
+                                        </Text>
+                                    </View>
+
+                                    <View style={{ flexDirection: "row", columnGap: 10}}>
+                                        <Text style={styles.itemText}>6.</Text>
+                                        <Text style={styles.itemText}>Some tests, such as a pap smear or vaginal swab, may be affected by 
+                                            <Text style={styles.boldText}> menstrual blood </Text>and may need to be rescheduled.
+                                        </Text>
+                                    </View>
+
+                                    <View style={{ flexDirection: "row", paddingTop: "3%", alignItems: "center", columnGap: 10}}>
+                                        <Checkbox 
+                                            style={styles.checkbox}
+                                            value={isChecked}
+                                            onValueChange={setIsChecked}
+                                            color={isChecked ? colors.brown : undefined}
+                                        />
+                                        
+                                        <Text style={styles.itemText}>I understand and accept</Text>
+                                    </View>
+
+                                    <CustomButton 
+                                        title='CONTINUE'
+                                        bgStyle="blue"
+                                        disabled={isChecked ? false : true}
+                                        onPress={()=>setBsIndex(3)}
+                                        mt="7%"
+                                    />
+                                </View>
+                            </View>
+                        }
+
+                        {bsIndex === 3 &&
+                            <View style={styles.summarizeBs}>
+                                <Text style={{ fontFamily: "pro-black", textAlign: "center", color: colors.blue, fontSize: getFontSize(0.033), paddingVertical: "7%", marginTop: "3%" }}>
+                                    LET'S SUMMARIZE
+                                </Text>
+
+                                <View style={{ paddingHorizontal: "5%", paddingVertical: "6%" }}> 
+                                    <Text style={styles.itemText}>Reason for visit:</Text>
+
+                                    <View style={{ flexDirection: "row", alignItems: "center", paddingTop: "3%", justifyContent: "space-between"}}>
+                                        <Text style={[styles.boldText, { fontSize: getFontSize(0.02) }]}>STI’s Complete labor test</Text>
+                                        <Text style={styles.itemText}>235€</Text>
+                                    </View>
+
+                                    <View style={{ paddingVertical: "3%" }}>
+                                        <Text style={styles.itemText}>Gonorrhoe, Chlamidien, Ureaplasma,</Text>
+                                        <Text style={styles.itemText}>Mycoplasma, Trichomoniasis, HIV, HCV,</Text>
+                                        <Text style={styles.itemText}>Hepatitis B Screening</Text>
+                                    </View>
+
+                                </View>
+
+                                <View style={{ backgroundColor: colors.black, height: 1 }} />
+
+                                <View style={{ paddingHorizontal: "5%", paddingVertical: "6%" }}>
+                                    <Text style={[styles.boldText, { fontSize: getFontSize(0.023) }]}>{formDeets.name}{" "}{formDeets.lastName}</Text>
+
+                                    <View>
+                                        <Text>{appointmentDetails.day}</Text>
+                                        <Text>{appointmentDetails.time.toString()}</Text>
+                                    </View>
+                                </View>
                             </View>
                         }
                     </View>
@@ -395,7 +544,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
 }
 
 export default Appointment
-const getHeight = Dimensions.get("screen").height
+const checkboxWidth = width - (width * 0.93);
 
 const styles = StyleSheet.create({
     textContainer: {
@@ -410,16 +559,40 @@ const styles = StyleSheet.create({
     },
     bottomSheet: {
         backgroundColor: colors.btrColor, 
-        height: getHeight - (0.6 * getHeight), 
+        height: height - (0.6 * height), 
         borderTopLeftRadius: 35,
         borderTopRightRadius: 35,
         paddingHorizontal: "3%"
     },
     formBs: {
         backgroundColor: colors.btrColor, 
-        height: getHeight - (0.2 * getHeight), 
+        height: height - (0.2 * height), 
         borderTopLeftRadius: 35,
         borderTopRightRadius: 35,
         paddingHorizontal: "3%"
+    },
+    prepareBs: {
+        backgroundColor: colors.btrColor, 
+        height: height - (0.13 * height), 
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
+    },
+    boldText: {
+        fontFamily: "pro-bold"
+    },
+    itemText: {
+        fontSize: getFontSize(0.02)
+    },
+    checkbox: {
+        width: checkboxWidth,
+        borderRadius: 7,
+        height: 25,
+        borderColor: colors.brown
+    },
+    summarizeBs: {
+        backgroundColor: colors.btrColor, 
+        height: height - (0.5 * height), 
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
     }
 })
