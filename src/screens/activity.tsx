@@ -10,6 +10,8 @@ import CustomButton from '../components/custom-button'
 import { BottomSheet } from "react-native-btr";
 import { useFocusEffect } from '@react-navigation/native'
 import Appointment from '../components/appointment'
+import { monthNames } from '../utils/data'
+import { CALENDAR } from '../constants/routeName'
 
 const Activity = ({ navigation }: NavigationProps) => {
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
@@ -19,11 +21,6 @@ const Activity = ({ navigation }: NavigationProps) => {
   const [ currentStep, setCurrentStep ] = useState(1);
  
   const getFormattedDate = () => {
-    const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = monthNames[today.getMonth()]; 
@@ -34,6 +31,10 @@ const Activity = ({ navigation }: NavigationProps) => {
 
   function toggle() {
     setVisible((visible) => !visible);
+  }
+
+  const goToCalendar = ()=> {
+    navigation.navigate(CALENDAR);
   }
 
 
@@ -155,7 +156,8 @@ const Activity = ({ navigation }: NavigationProps) => {
           currentStep={currentStep}
           setAppointment={setAppointment}
           setVisible={setVisible}
-          setCurrentStep={(setCurrentStep)}
+          setCurrentStep={setCurrentStep}
+          calender={goToCalendar}
         />
       }
     </SafeAreaView>

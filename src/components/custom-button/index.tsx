@@ -3,11 +3,8 @@ import React from 'react'
 import colors from '../../assets/themes/colors'
 import { getFontSize } from '../../utils/getFontSize'
 import { CustomButtonProps } from '../../types'
-import { useCustomFonts } from '../../hooks/useCustomFonts'
 
 const CustomButton = ({ title, onPress, bgStyle, loading, disabled, mt, style }: CustomButtonProps) => {
-  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
-
   const getBorderColor = () => {
     if (loading) {
       return colors.grey
@@ -24,12 +21,8 @@ const CustomButton = ({ title, onPress, bgStyle, loading, disabled, mt, style }:
     }
   }
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
-    <TouchableOpacity style={[styles.container, style, { marginTop: mt, opacity: disabled && 0.5, backgroundColor: getBorderColor() }]} disabled={disabled ? disabled : loading} onLayout={onLayoutRootView} onPress={onPress}>
+    <TouchableOpacity style={[styles.container, style, { marginTop: mt, opacity: disabled && 0.5, backgroundColor: getBorderColor() }]} disabled={disabled ? disabled : loading} onPress={onPress}>
       <View style={styles.btn_container}>
         {loading && <ActivityIndicator color={colors.white} style={{ paddingRight: 7 }} />}
         <Text style={styles.text}>{title}</Text>

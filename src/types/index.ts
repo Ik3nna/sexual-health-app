@@ -69,7 +69,8 @@ export type AppointmentProps = {
     currentStep: number, 
     setAppointment: any, 
     setVisible: any, 
-    setCurrentStep: any
+    setCurrentStep: any,
+    calender?: any
 }
 
 export type TimePickerProps = {

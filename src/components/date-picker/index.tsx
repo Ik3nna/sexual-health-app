@@ -3,12 +3,9 @@ import React, { useState } from 'react'
 import Icon from '../icons'
 import colors from '../../assets/themes/colors'
 import TimePicker from '../time-picker'
-import { useCustomFonts } from '../../hooks/useCustomFonts'
 import { getFontSize } from '../../utils/getFontSize'
-import { useGlobalContext } from '../../context/useGlobalContext'
 
 const DatePicker = ({ item }: { item: string }) => {
-  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
   const [toggleArrowButton, setToggleArrowButton] = useState(false);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
@@ -16,12 +13,8 @@ const DatePicker = ({ item }: { item: string }) => {
     setSelectedTime(time);
   };
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
-    <View onLayout={onLayoutRootView} style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.flex}>
         <Text style={styles.date}>{item}</Text>
         <TouchableOpacity onPress={()=>setToggleArrowButton(prev=>!prev)}>

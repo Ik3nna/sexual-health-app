@@ -4,7 +4,6 @@ import ProgressBar from '../progress-bar'
 import { AppointmentProps } from '../../types'
 import { Image } from 'react-native'
 import Cards from '../cards'
-import { useCustomFonts } from '../../hooks/useCustomFonts'
 import MapView, { Marker } from 'react-native-maps'
 import { getFontSize } from '../../utils/getFontSize'
 import Icon from '../icons'
@@ -14,116 +13,40 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import DatePicker from '../date-picker'
 import { useGlobalContext } from '../../context/useGlobalContext'
 import Dropdown from '../dropdown'
-import Input from '../input'
 import BTSInput from '../bts-input'
 import { BottomSheet } from 'react-native-btr'
 import Checkbox from 'expo-checkbox'
+import { centres, tests, monthNames, dayNames } from '../../utils/data'
 
 // assets
 import location from "../../assets/images/location-icon.png";
 import map from "../../assets/images/map-icon.png";
 
 
-const centres = [
-    { 
-        title: "New Heights Pharma", 
-        subTitle: "Our business activities include wholesale, distribution, diagnostics of Pharmaceuticals in Maryland",
-        address: "3, Olaide Benson Street, Lagos",
-        latitude: 6.56762698706437, 
-        longitude: 3.3672008470277364
-    },
-    { 
-        title: "QDX Healthcare", 
-        subTitle: "Health firm providing basic and specialized clinical, pathological and radio diagnostic services",
-        address: "131, Obafemi Awolowo Way Ikeja, Lagos",
-        latitude: 6.608297856738449, 
-        longitude: 3.3496149675313878
-    },
-    { 
-        title: "C. C. OBI Nigeria Limited", 
-        subTitle: "Health in Lagos, Hospital in Lagos, Hospital Equipment in Lagos, Diagnostic in Lagos",
-        address: "161, Herbert Marculey Way, Lagos",
-        latitude: 6.492485653992443, 
-        longitude: 3.381859469377602
-    },
-    { 
-        title: "Radmed Diagnostics", 
-        subTitle: "Our business activities include wholesale, distribution, diagnostics of Pharmaceuticals in Maryland",
-        address: "3B, Ligali Ayorinde Street, Lagos",
-        latitude: 6.4347002572901095, 
-        longitude: 3.4400921540365954 
-    },
-    { 
-        title: "Alpha Diagnostics Centre", 
-        subTitle: "Health in Lagos, Hospital in Lagos, Hospital Equipment in Lagos, Diagnostic in Lagos",
-        address: "24, Shekoni Street, Coker Village, Lagos",
-        latitude: 6.474747816355028,  
-        longitude: 3.332250367531077 
-    },
-    { 
-        title: "Alma Clinic and Diagnostic Services", 
-        subTitle: "Health in Lagos, Hospital in Lagos, Hospital Equipment in Lagos, Diagnostic in Lagos",
-        address: "60A, Campbell Street, Lagos,",
-        latitude: 5.675019590617009,   
-        longitude: -0.02072495945933494 
-    },
-    { 
-        title: "Union Diag. and Clinical Services", 
-        subTitle: "Health in Lagos, Hospital in Lagos, Hospital Equipment in Lagos, Diagnostic in Lagos",
-        address: "80, Agege Motor Road, Lagos, Lagos",
-        latitude: 6.636880161671027,    
-        longitude: 3.341299902226391 
-    },
-    { 
-        title: "Barnes Diagnostic and Heart Centre", 
-        subTitle: "Health in Victoria Island, Medicine in Victoria Island, Hospital in Victoria Island, Health Care in Victoria Island",
-        address: "277b, Jose Adeogun Street Victoria Island, Lagos",
-        latitude: 6.431066020069604,     
-        longitude: 3.439155003467879 
-    },
-]
-const tests = [
-    { title: "STIs Basic labor test", price: "$15.99" },
-    { title: "STIs Complete labor test", price: "$23.50" },
-    { title: "HIV PoC Rapidtest", price: "$39.99" },
-    { title: "HIV labor test", price: "$59.99" },
-    { title: "Chlamyidien PoC Rapidtest", price: "$39.90" },
-    { title: "Hepatitis B PoC Rapidtest", price: "$59.99" },
-    { title: "Hepatitis B PoC Labor test", price: "$89.99" },
-]
-const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-const dayNames = [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-];
-
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }: AppointmentProps) => {
-  const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep, calender }: AppointmentProps) => {
   const [toggleSwitch, setToggleSwitch] = useState(false);
-  const [pressedCardIndex, setPressedCardIndex] = useState<number | null>(null)
-  const getWidth = Dimensions.get("window").width;
-  const navigation = useNavigation();
-  const { appointmentDetails } = useGlobalContext(); console.log(appointmentDetails.day);
+  const [pressedCardIndex, setPressedCardIndex] = useState<number | null>(null);
+  const { appointmentDetails, setAppointmentDetails } = useGlobalContext(); 
+  const navigation = useNavigation()
+
   const [viewBs, setViewBs] = useState(false);
   const [bsIndex, setBsIndex] = useState(0);
   const [formDeets, setFormDeets] = useState({ name: "",  lastName: "" });
   const [isChecked, setIsChecked] = useState(false);
 
+  const [appointmentDates, setAppointmentDates] = useState<any>([]);
+  const numDatesToShow = 4;
+  const [lastDate, setLastDate] = useState<any>(null);
+
   const handleNextStep = (index: number)=> {
     setPressedCardIndex(index)
     setCurrentStep((prev: number)=>prev + 1)
   }
-
-  const [appointmentDates, setAppointmentDates] = useState<any>([]);
-  const numDatesToShow = 4;
-  const [lastDate, setLastDate] = useState<any>(null);
 
   const calculateNextAppointments = (numDays: number, lastDate: any) => {
     const today = lastDate || new Date();
@@ -158,26 +81,38 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
     setFormDeets({...formDeets, [key]: text})
   }
 
+  // Get the time of appointment
+  const appointmentTime = new Date(appointmentDetails.time);
+  const hours = appointmentTime.getHours();
+  const minutes = appointmentTime.getMinutes();
+
+  // Determine whether it's AM or PM
+  const period = hours >= 12 ? "PM" : "AM"; 
+  
+  //  Convert hours to 12hr format
+  const formattedHours = hours > 12 ? hours - 12 : hours;
+
+  // Format the time as "hh:mm"
+  const formattedTime = `${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}${" "}${period}`;
+
   useEffect(() => {
     const { dates, lastDate: newLastDate }= calculateNextAppointments(numDatesToShow, lastDate);
     setAppointmentDates(dates);
     setLastDate(newLastDate)
   }, []);
 
-//   useFocusEffect(
-//     useCallback(() => {
-//       return () => {
-//        setCurrentStep(1);
-//       }
-//     }, [navigation])
-//   );
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+       setCurrentStep(1);
+       setAppointmentDetails({})
+      }
+    }, [navigation])
+  );
   
-  if (!fontsLoaded) {
-    return null;
-  }
-  
+ 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} onLayout={onLayoutRootView}>
+    <ScrollView showsVerticalScrollIndicator={false}>
         <ProgressBar 
             onPress={()=>{
               if (currentStep === 1) {
@@ -192,7 +127,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
             }}
             currentStep={currentStep}
             isLast={5}
-            stepWidth={getWidth - (getWidth * 0.87)}
+            stepWidth={width - (width * 0.87)}
             colG={true}
         />
 
@@ -486,7 +421,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                                     LET'S SUMMARIZE
                                 </Text>
 
-                                <View style={{ paddingHorizontal: "5%", paddingVertical: "6%" }}> 
+                                <View style={{ paddingHorizontal: "5%", paddingVertical: "3%" }}> 
                                     <Text style={styles.itemText}>Reason for visit:</Text>
 
                                     <View style={{ flexDirection: "row", alignItems: "center", paddingTop: "3%", justifyContent: "space-between"}}>
@@ -504,13 +439,20 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
 
                                 <View style={{ backgroundColor: colors.black, height: 1 }} />
 
-                                <View style={{ paddingHorizontal: "5%", paddingVertical: "6%" }}>
+                                <View style={{ paddingHorizontal: "5%", paddingTop: "3%" }}>
                                     <Text style={[styles.boldText, { fontSize: getFontSize(0.023) }]}>{formDeets.name}{" "}{formDeets.lastName}</Text>
 
-                                    <View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: "3%" }}>
                                         <Text>{appointmentDetails.day}</Text>
-                                        <Text>{appointmentDetails.time.toString()}</Text>
+                                        <Text>{formattedTime}</Text>
                                     </View>
+
+                                    <CustomButton 
+                                        title='SET A REMINDER'
+                                        bgStyle="blue"
+                                        onPress={()=>calender()}
+                                        mt="7%"
+                                    />
                                 </View>
                             </View>
                         }
@@ -533,6 +475,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep }
                         }
                     }
                 }}
+                disabled={(currentStep === 4 && appointmentDetails.time === undefined) ? true : false }
                 mt={"14%"}
                 style={{ marginHorizontal: "6%", }}
             />

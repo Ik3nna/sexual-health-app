@@ -2,12 +2,10 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import colors from '../../assets/themes/colors';
 import { getFontSize } from '../../utils/getFontSize';
-import { useCustomFonts } from '../../hooks/useCustomFonts';
 import { useGlobalContext } from '../../context/useGlobalContext';
 import { TimePickerProps } from '../../types';
 
 const TimePicker = ({ item, st, sst, onTimeChange }: TimePickerProps) => {
-    const { fontsLoaded, onLayoutRootView } = useCustomFonts();
     const { appointmentDetails, setAppointmentDetails } = useGlobalContext();
     const initialTime = new Date();
     initialTime.setHours(12, 0, 0, 0);
@@ -61,12 +59,8 @@ const TimePicker = ({ item, st, sst, onTimeChange }: TimePickerProps) => {
     const allTimes = generateTimes();
     const visibleTimes = showMore ? allTimes : allTimes.slice(0, 8);
 
-    if (!fontsLoaded) {
-        return null
-    }
-  
     return (
-      <View onLayout={onLayoutRootView} > 
+      <View> 
         <View style={styles.container}>
             {visibleTimes.map((time) => renderTimeSlot(time))}
         </View>
