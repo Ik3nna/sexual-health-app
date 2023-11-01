@@ -1,4 +1,4 @@
-import { SafeAreaView, Button, StyleSheet, Text, TextInput, Platform, View } from 'react-native'
+import { SafeAreaView, Alert, StyleSheet, Text, Platform, View } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useGlobalContext } from '../context/useGlobalContext'
 import CalendarPicker from 'react-native-calendar-picker';
@@ -8,6 +8,10 @@ import { Source } from 'expo-calendar';
 import Icon from '../components/icons';
 import colors from '../assets/themes/colors';
 import { getFontSize } from '../utils/getFontSize';
+import CustomButton from '../components/custom-button';
+import { NavigationProps } from '../types';
+import { HOME } from '../constants/routeName';
+import moment from 'moment';
 
 async function getDefaultCalendarSource() {
   const calendars = await Calenda.getCalendarsAsync(
@@ -36,22 +40,51 @@ async function createCalendar() {
     ownerAccount: 'personal',
     accessLevel: Calenda.CalendarAccessLevel.OWNER,
   });
-  console.log(`Your new calendar ID is: ${newCalendarID}`);
+  return newCalendarID;
 }
 
-const Calendar = () => {
+const Calendar = ({ navigation }: NavigationProps) => {
   const { appointmentDetails } = useGlobalContext();
   const [selectedStartDate, setSelectedStartDate] = useState<any | null>(null);
 
   const startDate = selectedStartDate ? selectedStartDate.format('YYYY-MM-DD').toString() : '';
+  // Set the time to noon (12:00 PM)
+  const noonTime = moment(startDate).set({ hour: 11, minute: 0, second: 0, millisecond: 0 });
+  // Format the noonTime to the desired format
+  const formattedStartDate = noonTime.format("YYYY-MM-DDTHH:mm:ss.sss[Z]");
+
+  const plusIcon = {
+    type: "octicons", 
+    name: "plus", 
+    size: 25, 
+    color: colors.white 
+  }
+
+  const getAppointementDate = (date: any) => moment.utc(date, "YYYY-MM-DD'T'HH:mm:ss.sssZ").toDate();
+
+  const addNewEvent = async () => {
+    try {
+      const calendarId = await createCalendar();
+      
+      const res = await Calenda.createEventAsync(calendarId, {
+        endDate: getAppointementDate(formattedStartDate),
+        startDate: getAppointementDate(formattedStartDate),
+        title: "REMINDER",
+      });
+
+      if (res) {
+        Alert.alert("YOUR REMINDER IS SET!")
+      }
+    } catch (e) {
+      console.log("err", e);
+    }
+  };
 
   useEffect(() => {
     (async () => {
       const { status } = await Calenda.requestCalendarPermissionsAsync();
       if (status === 'granted') {
-        const calendars = await Calenda.getCalendarsAsync(Calenda.EntityTypes.EVENT);
-        console.log('Here are all your calendars:');
-        console.log({ calendars });
+        await Calenda.getCalendarsAsync(Calenda.EntityTypes.EVENT);
       }
     })();
   }, []);
@@ -60,10 +93,17 @@ const Calendar = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar style='auto' />
 
-      <Text style={styles.defaultText}>
-        SET A REMINDER FOR YOUR CHECKUP
-      </Text>
-
+      {!appointmentDetails.day ?
+        <Text style={styles.defaultText}>
+          SET A REMINDER FOR YOUR CHECKUP
+        </Text> :
+        <View>
+          <Text style={styles.text}>
+            REMIND ME TO...
+          </Text>
+          <View style={{ backgroundColor: colors.lineColor, height: 1, marginBottom: "7%" }} />
+        </View>
+      }
 
       <CalendarPicker 
         onDateChange={setSelectedStartDate}
@@ -77,9 +117,30 @@ const Calendar = () => {
 
       <Text style={styles.dateText}>{startDate}</Text>
 
-      <View>
-        
-      </View>
+      {!appointmentDetails.day ?
+        <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: "4%" }}>
+          <CustomButton 
+            title='SKIP'
+            textStyle={{ color: colors.empty }}
+            style={{ borderWidth: 3, borderColor: colors.empty, width: "49%" }}
+            onPress={()=>navigation.navigate(HOME)}
+          />
+
+          <CustomButton 
+            title='ADD A REMINDER'
+            icon={plusIcon}
+            bgStyle='blue'
+            style={{ width: "49%"}}
+            onPress={()=>addNewEvent()}
+          />
+        </View> :
+        <CustomButton 
+          title='SAVE'
+          bgStyle="blue"
+          style={{ marginHorizontal: "4%" }}
+          onPress={()=>console.log("")}
+        />
+      }
     </SafeAreaView>
   )
 }
@@ -90,8 +151,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "center"
   },
   defaultText: {
     fontFamily: "pro-black", 
@@ -100,6 +160,14 @@ const styles = StyleSheet.create({
     fontSize: getFontSize(0.03), 
     paddingVertical: "10%", 
     marginTop: "3%" 
+  },
+  text: {
+    fontFamily: "pro-light", 
+    color: colors.blue, 
+    fontSize: getFontSize(0.03), 
+    paddingVertical: "4%", 
+    marginTop: "3%",
+    paddingHorizontal: "4%" 
   },
   dateText: {
     margin: 16,
