@@ -105,7 +105,6 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep, 
     useCallback(() => {
       return () => {
        setCurrentStep(1);
-       setAppointmentDetails({})
       }
     }, [navigation])
   );
