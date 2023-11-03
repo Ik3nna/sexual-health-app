@@ -165,10 +165,8 @@ const Calendar = ({ navigation }: NavigationProps) => {
         selectedDayTextStyle={{ color: colors.white }}
       />
 
-      <Text style={styles.dateText}>{startDate}</Text>
-
       {!appointmentDetails.day ?
-        <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: "4%" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", padding: "4%" }}>
           <CustomButton 
             title='SKIP'
             textStyle={{ color: colors.empty }}
@@ -187,7 +185,7 @@ const Calendar = ({ navigation }: NavigationProps) => {
         <CustomButton 
           title='SAVE'
           bgStyle="blue"
-          style={{ marginHorizontal: "4%" }}
+          style={{ marginHorizontal: "4%"}}
           onPress={()=>saveNewEvent()}
         />
       }

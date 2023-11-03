@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.brown
     },
     androidBox: {
-        elevation: 4, 
+        elevation: 0, 
     },
     iosBox: {
         shadowColor: 'rgba(0, 0, 0, 0.25)',

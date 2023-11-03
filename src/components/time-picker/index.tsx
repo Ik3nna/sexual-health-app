@@ -6,7 +6,7 @@ import { useGlobalContext } from '../../context/useGlobalContext';
 import { TimePickerProps } from '../../types';
 
 const TimePicker = ({ item, st, sst, onTimeChange }: TimePickerProps) => {
-    const { appointmentDetails, setAppointmentDetails } = useGlobalContext();
+    const { setAppointmentDetails } = useGlobalContext();
     const initialTime = new Date();
     initialTime.setHours(12, 0, 0, 0);
   
@@ -29,7 +29,7 @@ const TimePicker = ({ item, st, sst, onTimeChange }: TimePickerProps) => {
 
     const formatTime = (time: Date) => {
       const hours = time
-      .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
       .replace(" ", "");
       return hours;
     };
@@ -82,19 +82,20 @@ export default TimePicker
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        flexWrap: "wrap",
-        marginVertical: "3%",
-        rowGap: 10
+      flexDirection: "row",
+      justifyContent: "space-evenly",
+      flexWrap: "wrap",
+      marginVertical: "3%",
+      rowGap: 10,
     },
     line: {
-        height: 1, 
-        backgroundColor: colors.lineColor,
+      height: 1, 
+      backgroundColor: colors.lineColor,
     },
     time: {
-        padding: "3%",
-        backgroundColor: colors.brown,
-        borderRadius: 15
+      padding: "3%",
+      backgroundColor: colors.brown,
+      borderRadius: 15,
+      flexBasis: "25%"
     }
 })

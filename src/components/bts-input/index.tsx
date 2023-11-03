@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.formInputColor, 
         width: "100%",
         borderRadius: 5,
-        paddingVertical: "4%",
+        paddingVertical: "3%",
         color: colors.black,
         fontFamily: "pro-bold",
         fontSize: getFontSize(0.024),

@@ -1,11 +1,10 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ACTIVITY, CALENDAR, GRAPHICS, HOME, HOMEPAGE, INFO, PEOPLE } from '../constants/routeName';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Icon from '../components/icons';
 import colors from '../assets/themes/colors';
 import { getFontSize } from '../utils/getFontSize';
-import { useCustomFonts } from '../hooks/useCustomFonts';
 
 // screens
 import Info from '../screens/info';
@@ -18,11 +17,6 @@ import Activity from '../screens/activity';
 const Tab = createBottomTabNavigator();
 
 function BottomTabs () {
-  const { fontsLoaded } = useCustomFonts();
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <Tab.Navigator

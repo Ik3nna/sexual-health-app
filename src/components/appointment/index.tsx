@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Platform } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import ProgressBar from '../progress-bar'
 import { AppointmentProps } from '../../types'
@@ -108,7 +108,6 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep, 
       }
     }, [navigation])
   );
-  
  
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -231,7 +230,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep, 
                <View style={styles.textContainer}>
                     {tests.map((item, index)=>
                         <View key={index}>
-                            <View style={{ flexDirection: "row", padding: "4.55%", alignItems: "center", justifyContent:"space-between"}}>
+                            <View style={{ flexDirection: "row", padding: Platform.OS === "ios" ? "4.55%" : "4.4%", alignItems: "center", justifyContent:"space-between"}}>
                                 <Text style={{ fontFamily: "pro-bold", fontSize: getFontSize(0.02) }}>{item.title}</Text>
                                 <Text style={{ fontFamily: "pro-bold", fontSize: getFontSize(0.018) }}>{item.price}</Text>
                             </View>
@@ -416,7 +415,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep, 
 
                         {bsIndex === 3 &&
                             <View style={styles.summarizeBs}>
-                                <Text style={{ fontFamily: "pro-black", textAlign: "center", color: colors.blue, fontSize: getFontSize(0.033), paddingVertical: "7%", marginTop: "3%" }}>
+                                <Text style={{ fontFamily: "pro-black", textAlign: "center", color: colors.blue, fontSize: getFontSize(0.033), paddingVertical: Platform.OS === "ios" ? "7%" : "4%", marginTop: "3%" }}>
                                     LET'S SUMMARIZE
                                 </Text>
 
@@ -475,7 +474,7 @@ const Appointment = ({ currentStep, setAppointment, setVisible, setCurrentStep, 
                     }
                 }}
                 disabled={(currentStep === 4 && appointmentDetails.time === undefined) ? true : false }
-                mt={"14%"}
+                mt={Platform.OS=== "ios" ? "14%" : "5%" }
                 style={{ marginHorizontal: "6%", }}
             />
         }
@@ -515,9 +514,10 @@ const styles = StyleSheet.create({
     },
     prepareBs: {
         backgroundColor: colors.btrColor, 
-        height: height - (0.13 * height), 
+        height: Platform.OS === "ios" ? height - (0.13 * height) : height - (0.27 * height), 
         borderTopLeftRadius: 35,
         borderTopRightRadius: 35,
+        position: "relative"
     },
     boldText: {
         fontFamily: "pro-bold"

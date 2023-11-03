@@ -166,7 +166,7 @@ const Activity = ({ navigation }: NavigationProps) => {
 
 export default Activity
 const getWidth = Dimensions.get("window").width;
-const getHeight = Dimensions.get("screen").height;
+const getHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   activity: {
