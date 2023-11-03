@@ -1,17 +1,17 @@
 import { SafeAreaView, Alert, StyleSheet, Text, Platform, View } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useGlobalContext } from '../context/useGlobalContext'
 import CalendarPicker from 'react-native-calendar-picker';
 import { StatusBar } from 'expo-status-bar';
 import * as Calenda from 'expo-calendar';
-import { Source } from 'expo-calendar';
 import Icon from '../components/icons';
 import colors from '../assets/themes/colors';
 import { getFontSize } from '../utils/getFontSize';
 import CustomButton from '../components/custom-button';
 import { NavigationProps } from '../types';
 import { HOME } from '../constants/routeName';
-import moment from 'moment';
+import moment from 'moment-timezone';
+import { useFocusEffect } from '@react-navigation/native';
 
 async function getDefaultCalendarSource() {
   const calendars = await Calenda.getCalendarsAsync(
@@ -44,14 +44,26 @@ async function createCalendar() {
 }
 
 const Calendar = ({ navigation }: NavigationProps) => {
-  const { appointmentDetails } = useGlobalContext();
-  const [selectedStartDate, setSelectedStartDate] = useState<any | null>(null);
+  const { appointmentDetails, setAppointmentDetails } = useGlobalContext();
+  const [selectedStartDate, setSelectedStartDate] = useState<moment.Moment | null>(
+    appointmentDetails && appointmentDetails.day
+      ? moment(appointmentDetails.day, moment.ISO_8601)
+      : null
+  );
 
   const startDate = selectedStartDate ? selectedStartDate.format('YYYY-MM-DD').toString() : '';
-  // Set the time to noon (12:00 PM)
-  const noonTime = moment(startDate).set({ hour: 11, minute: 0, second: 0, millisecond: 0 });
+  // Set the time
+  const noonTime = moment.tz(startDate, 'YYYY-MM-DD', 'Africa/Lagos')
+  .set({ 
+    hour: appointmentDetails ? moment(appointmentDetails.time).get('hour') : 11, 
+    minute: appointmentDetails ? moment(appointmentDetails.time).get('minute') : 0, 
+    second: 0, 
+    millisecond: 0 
+  });
   // Format the noonTime to the desired format
-  const formattedStartDate = noonTime.format("YYYY-MM-DDTHH:mm:ss.sss[Z]");
+  const formattedStartDate = moment(noonTime).subtract(1, "hour").format("YYYY-MM-DDTHH:mm:ss.sss[Z]");
+  // Display the formatted start date in a user-friendly format
+  const displayFormattedStartDate = noonTime.format("MMMM D, YYYY [at] h:mm A");
 
   const plusIcon = {
     type: "octicons", 
@@ -73,7 +85,25 @@ const Calendar = ({ navigation }: NavigationProps) => {
       });
 
       if (res) {
-        Alert.alert("YOUR REMINDER IS SET!")
+        Alert.alert("YOUR REMINDER IS SET!",`${displayFormattedStartDate}`)
+      }
+    } catch (e) {
+      console.log("err", e);
+    }
+  };
+
+  const saveNewEvent = async () => {
+    try {
+      const calendarId = await createCalendar();
+
+      const res = await Calenda.createEventAsync(calendarId, {
+        endDate: getAppointementDate(formattedStartDate),
+        startDate: getAppointementDate(formattedStartDate),
+        title: "REMINDER",
+      });
+
+      if (res) {
+        Alert.alert("YOUR REMINDER IS SET!",`${displayFormattedStartDate}`);
       }
     } catch (e) {
       console.log("err", e);
@@ -88,6 +118,25 @@ const Calendar = ({ navigation }: NavigationProps) => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (appointmentDetails && appointmentDetails.day) {
+      // Parse the current date format
+      const parsedDate = moment(appointmentDetails.day, 'dddd DD, MMMM YYYY');
+
+      // Set the selectedStartDate as a moment.Moment object
+      setSelectedStartDate(parsedDate);
+    }
+  }, [appointmentDetails]);
+
+  useFocusEffect(
+    useCallback(()=>{
+      return ()=> {
+        setAppointmentDetails({});
+        setSelectedStartDate(null);
+      }
+    },[navigation])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -107,6 +156,7 @@ const Calendar = ({ navigation }: NavigationProps) => {
 
       <CalendarPicker 
         onDateChange={setSelectedStartDate}
+        selectedStartDate={selectedStartDate ? selectedStartDate.toDate() : undefined}
         previousTitle={<Icon type="mi" name="arrow-left" size={30} color={colors.black} />}
         nextTitle={<Icon type="mi" name="arrow-right" size={30} color={colors.black} />}
         todayTextStyle={{ color: colors.white }}
@@ -138,7 +188,7 @@ const Calendar = ({ navigation }: NavigationProps) => {
           title='SAVE'
           bgStyle="blue"
           style={{ marginHorizontal: "4%" }}
-          onPress={()=>console.log("")}
+          onPress={()=>saveNewEvent()}
         />
       }
     </SafeAreaView>

@@ -50,3 +50,6 @@ const styles = StyleSheet.create({
       fontSize: getFontSize(0.023)
     }
 })
+
+
+
