@@ -237,6 +237,7 @@ const checkboxWidth = getWidth - (getWidth * 0.93);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center"
   },
   wrapper_container: {
     marginTop: Platform.OS === "ios" ? "20%" : "6%",

@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     },
     error: {
       fontFamily: "pro-bold",
-      paddingBottom: 5
+      paddingBottom: 5,
+      fontSize: getFontSize(0.015)
     }
 })

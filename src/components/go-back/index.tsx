@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 const GoBack = () => {
   const navigation = useNavigation()
   return (
-    <TouchableOpacity style={{ paddingVertical: Platform.OS === "ios" ? "6%" : "8%" }} onPress={()=>navigation.goBack()}>
+    <TouchableOpacity style={{ paddingVertical: "6%" }} onPress={()=>navigation.goBack()}>
         <Icon type="ant" name="arrowleft" size={27} color={colors.black} />
     </TouchableOpacity>
   )

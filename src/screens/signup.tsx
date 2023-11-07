@@ -1,4 +1,5 @@
-import { SafeAreaView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, Alert, Dimensions, Platform } from 'react-native'
+import { StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, Alert, Platform, Dimensions } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useForm, Controller } from "react-hook-form";
@@ -55,11 +56,11 @@ const Signup = ({ navigation }: NavigationProps) => {
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
       <StatusBar style='auto' />
       <KeyboardAvoidingView
-        style={styles.container}
+        style={{ flex: 1/4, justifyContent: "center" }}
         behavior={Platform.OS === "ios" ? "padding" : "position"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : getHeight - (3 * getHeight)}
       >
-        <View style={{ marginBottom: 5, paddingLeft: "5%" }}>
+        <View style={{ marginBottom: "5%", paddingLeft: "5%" }}>
           <Text style={styles.text}>SIGNUP</Text>
         </View>
 
