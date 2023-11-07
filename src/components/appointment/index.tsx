@@ -22,7 +22,6 @@ import { centres, tests, monthNames, dayNames } from '../../utils/data'
 import location from "../../assets/images/location-icon.png";
 import map from "../../assets/images/map-icon.png";
 
-
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;

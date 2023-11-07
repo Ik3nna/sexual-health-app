@@ -41,7 +41,6 @@ const Activity = ({ navigation }: NavigationProps) => {
   const handleSave = ()=> {
     if (index) {
       setVisible(true);
-      // setAppointment(true);
     } else {
       Alert.alert("Error", "Please indicate whether you used contraception or not")
     }
