@@ -64,8 +64,6 @@ const Home = ({ navigation }: NavigationProps) => {
           </View>
         )}
       </ScrollView>
-
-     
     </SafeAreaView>
   )
 }
